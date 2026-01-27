@@ -345,6 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
       animationId = null;
     }
     canvas.style.opacity = "0";
+    stopMobileNotes();
     if (accentGraphic) accentGraphic.classList.remove('playing');
     if (noteHotspot) noteHotspot.classList.remove('playing');
     if (navLogo) {
@@ -378,6 +379,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1800);
   }
 
+  let mobileNoteInterval = null;
+
+function startMobileNotes() {
+  if (mobileNoteInterval) return; // already running
+  mobileNoteInterval = setInterval(() => {
+    spawnFloatingNote();
+  }, 300); // one note every 300ms
+}
+
+function stopMobileNotes() {
+  if (mobileNoteInterval) {
+    clearInterval(mobileNoteInterval);
+    mobileNoteInterval = null;
+  }
+}
+
   // Clean up audio resources if the page is unloaded to avoid dangling contexts
   window.addEventListener('beforeunload', () => {
     if (audioContext && typeof audioContext.close === 'function') {
@@ -407,7 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Spawn floating note on mobile
-    spawnFloatingNote();
+    startMobileNotes();
 
     isPlaying = true;
     startVisualizer();
@@ -422,6 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
     audio.addEventListener("ended", () => {
       isPlaying = false;
       stopVisualizer();
+      stopMobileNotes();
     });
   }
 });

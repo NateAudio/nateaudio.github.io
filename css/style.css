@@ -633,6 +633,9 @@ body {
     position: absolute;
     inset: 0;
     z-index: 1;
+    background: transparent;
+    border: none;
+    outline: none;
   }
 
   /* Hotspot visible + clickable */
@@ -660,5 +663,6 @@ body {
   }
 
 }
+
 
 

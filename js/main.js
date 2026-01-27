@@ -11,6 +11,7 @@
 */
 
 document.addEventListener("DOMContentLoaded", () => {
+  const isMobile = window.innerWidth < 768;
   const canvas = document.getElementById("visualizer");
   const ctx = canvas.getContext("2d");
   const noteHotspot = document.querySelector(".note-hotspot");
@@ -19,12 +20,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const accentGraphic = document.querySelector('.accent-graphic');
   const audio = document.getElementById("chiptune-audio");
 
+  // ----- Config / state -----
+  const CONFIG = {
+    STAR_COUNT: 60,
+    NOTE_COUNT: 18,
+    NOTE_FONT: "14px system-ui, -apple-system, sans-serif",
+    FFT_SAMPLE_LOW: 6,
+    FFT_SAMPLE_AVG: 64
+  };
+
   let audioContext = null;
   let analyser = null;
   let dataArray = null;
   let animationId = null;
   let staticAnimationId = null;
   let isPlaying = false;
+
+  //Disable canvas entirely on mobile
+  if (isMobile) {
+  canvas.style.display = "none";
+}
 
   // Polyfill for CanvasRenderingContext2D.roundRect (small helper used when drawing bands)
   if (!CanvasRenderingContext2D.prototype.roundRect) {
@@ -51,31 +66,37 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function resizeCanvas() {
+    if (isMobile) return; //prevent heavy resizing on mobile
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * window.devicePixelRatio;
     canvas.height = rect.height * window.devicePixelRatio;
     ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
   }
 
-  window.addEventListener("resize", () => {
+window.addEventListener("resize", () => {
+  if (!isMobile) {
     resizeCanvas();
     initSky();
-  });
+  }
+});
 
-  resizeCanvas();
+  if (!isMobile) resizeCanvas();
 
+  // Collections used by both the idle and audio-driven renderers
   const stars = [];
   const notes = [];
   const noteChars = ["♪", "♫", "♩", "♬"];
 
   function initSky() {
+    if (isMobile) return; //skip on mobile
+    
     const width = canvas.width / window.devicePixelRatio;
     const height = canvas.height / window.devicePixelRatio;
 
     stars.length = 0;
     notes.length = 0;
 
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < CONFIG.STAR_COUNT; i++) {
       stars.push({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -84,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    for (let i = 0; i < 18; i++) {
+    for (let i = 0; i < CONFIG.NOTE_COUNT; i++) {
       notes.push({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -95,9 +116,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  initSky();
+  if (!isMobile) initSky();
 
   function drawStaticSky() {
+    if (isMobile) return; //skip idle animation on mobile
+   
     const width = canvas.width / window.devicePixelRatio;
     const height = canvas.height / window.devicePixelRatio;
 
@@ -121,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.fill();
     });
 
-    ctx.font = "14px system-ui, -apple-system, sans-serif";
+    ctx.font = CONFIG.NOTE_FONT;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     notes.forEach(n => {
@@ -136,10 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
     staticAnimationId = requestAnimationFrame(drawStaticSky);
   }
 
-  // Start with the idle sky animation; when audio plays we cancel this.
-  drawStaticSky();
+  if (!isMobile) drawStaticSky();
 
   function setupAudioAnalyser() {
+    // Create or re-use an AudioContext and hook the HTMLAudioElement up to an AnalyserNode
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const source = audioContext.createMediaElementSource(audio);
     analyser = audioContext.createAnalyser();
@@ -150,6 +173,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function drawScene() {
+    if (isMobile) return; //never run visualizer on mobile
+
     const width = canvas.width / window.devicePixelRatio;
     const height = canvas.height / window.devicePixelRatio;
 
@@ -169,12 +194,12 @@ document.addEventListener("DOMContentLoaded", () => {
       analyser.getByteFrequencyData(dataArray);
 
       let lowSum = 0;
-      for (let i = 0; i < 6; i++) lowSum += dataArray[i];
-      bass = lowSum / 6;
+      for (let i = 0; i < CONFIG.FFT_SAMPLE_LOW; i++) lowSum += dataArray[i];
+      bass = lowSum / CONFIG.FFT_SAMPLE_LOW;
 
       let total = 0;
-      for (let i = 0; i < 64; i++) total += dataArray[i];
-      avg = total / 64;
+      for (let i = 0; i < CONFIG.FFT_SAMPLE_AVG; i++) total += dataArray[i];
+      avg = total / CONFIG.FFT_SAMPLE_AVG;
     }
 
     const bassNorm = bass / 255;
@@ -224,10 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Replace the previous mountain silhouette + equalizer bars with
-    // layered horizontal bands across the sun. Bands respond to audio
-    // energy (bass/average) to pulse and shift widths, creating a
-    // stylized retro-sun effect similar to the reference.
     const time = performance.now() / 1000;
     const bandCount = 7;
     const bandBaseHeight = sunR * 0.14;
@@ -304,6 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startVisualizer() {
+    if (isMobile) return; //never run visualizer on mobile
     canvas.style.opacity = "1";
     if (accentGraphic) accentGraphic.classList.add('playing');
     if (noteHotspot) noteHotspot.classList.add('playing');
@@ -338,11 +360,33 @@ document.addEventListener("DOMContentLoaded", () => {
       rootStyle.removeProperty('--hero-translate');
       heroName.classList.remove('playing');
     }
-    // resume the idle sky loop for the static background
-    if (!staticAnimationId) drawStaticSky();
+    if (!isMobile && !staticAnimationId) drawStaticSky();
   }
 
-  if (noteHotspot && audio) {
+  // Clean up audio resources if the page is unloaded to avoid dangling contexts
+  window.addEventListener('beforeunload', () => {
+    if (audioContext && typeof audioContext.close === 'function') {
+      audioContext.close().catch(() => {});
+    }
+  });
+
+  // Mobile-only hotspot
+  if (isMobile && mobileHotspot && audio) {
+    mobileHotspot.addEventListener("click", async () => {
+      if (!audioContext) {
+        setupAudioAnalyser();
+    }
+
+    if (audioContext && audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
+
+    audio.currentTime = 0;
+    audio.play().catch(err => console.error(err));
+  });
+}
+  // Desktop hotspot
+  if (!isMobile && noteHotspot && audio) {
     noteHotspot.addEventListener("click", async () => {
       if (!audioContext) {
         setupAudioAnalyser();

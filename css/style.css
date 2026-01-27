@@ -14,6 +14,16 @@
   --transition-med: 220ms ease-out;
 }
 
+/*
+  Nate Audio — CSS notes
+
+  - Theme variables are declared in `:root` for easy tuning (colors, accent tones, transitions).
+  - The synthwave grid overlay is provided via `.page::before` and is intentionally placed behind content.
+  - Reactive glows for the nav and hero are driven by CSS custom properties that JS sets at runtime:
+      `--nav-text-shadow`, `--nav-translate`, `--hero-text-shadow`, `--hero-translate`.
+  - Keep layout rules separate from visual effects; avoid per-frame DOM writes — update the CSS vars instead.
+*/
+
 *,
 *::before,
 *::after {
@@ -580,5 +590,53 @@ body {
 
   .nav-links {
     gap: 16px;
+  }
+  
+  .accent-graphic {
+  width: 260px;
+  max-width: 80%;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+
+#mobileHotspot {
+  width: 200px;
+  height: 200px;
+  margin: 1.5rem auto 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-cyan);
+  font-size: 1.4rem;
+}
+}
+
+/* ============================
+   MOBILE HERO FIXES
+   ============================ */
+@media (max-width: 768px) {
+  .hero {
+    height: 70vh;
+    padding: 2rem 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    line-height: 1.1;
+  }
+
+  .hero p {
+    font-size: clamp(1rem, 4vw, 1.4rem);
+  }
+
+  #visualizer {
+    display: none; /* Hide canvas on mobile */
   }
 }

@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>Nate Audio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Preload the chiptune loop to reduce first-play latency when possible -->
+  <link rel="preload" as="audio" href="assets/chiptune-loop.mp3">
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -18,6 +20,7 @@
   </header>
 
   <main class="page">
+    <!-- Page structure: sections use scroll-snap; hero contains the circular visualizer canvas and the play hotspot -->
     <!-- HERO -->
     <section id="hero" class="section section-hero">
       <div class="hero-content">
@@ -38,6 +41,7 @@
           <div class="accent-graphic">
             <canvas id="visualizer"></canvas>
             <button class="note-hotspot" aria-label="Play a short chiptune">
+              <div id="mobileHotspot">♫</div>
               <span class="note-pair">♫♪</span>
             </button>
           </div>

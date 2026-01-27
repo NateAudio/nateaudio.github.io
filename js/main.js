@@ -11,6 +11,8 @@
 */
 
 document.addEventListener("DOMContentLoaded", () => {
+  const mobileHotspot = document.getElementById("mobileHotspot");
+
   const isMobile = window.innerWidth < 768;
   const canvas = document.getElementById("visualizer");
   const ctx = canvas.getContext("2d");
@@ -386,11 +388,15 @@ window.addEventListener("resize", () => {
   });
 }
   // Desktop hotspot
-  if (!isMobile && noteHotspot && audio) {
-    noteHotspot.addEventListener("click", async () => {
-      if (!audioContext) {
-        setupAudioAnalyser();
-      }
+  if (isMobile && mobileHotspot && audio) {
+  mobileHotspot.addEventListener("click", async () => {
+    if (!audioContext) setupAudioAnalyser();
+    if (audioContext.state === "suspended") await audioContext.resume();
+    audio.currentTime = 0;
+    audio.play().catch(err => console.error(err));
+  });
+}
+
 
       if (audioContext && audioContext.state === "suspended") {
         await audioContext.resume();

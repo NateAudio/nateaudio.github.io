@@ -707,7 +707,11 @@ body {
     height: 160px;
     transform: translate(-50%, -50%);
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(60,244,255,0.15), rgba(255,79,216,0.08));
+    background: radial-gradient(circle at center,
+    rgba(255,140,60,0.2) 0%,
+    rgba(60,244,255,0.15) 40%,
+    rgba(255,79,216,0.08) 100%);
+
     box-shadow:
       0 0 24px rgba(60,244,255,0.3),
       0 0 36px rgba(255,79,216,0.2);

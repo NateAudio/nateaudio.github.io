@@ -618,3 +618,23 @@ body {
     letter-spacing: 0.04em;
   }
 }
+
+/* Show a very simple hero on small phones: hide the heavy visualizer and surface a single play button */
+@media (max-width: 520px) {
+  .accent-graphic { display: none; }
+  .mobile-hero-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 18px 0;
+  }
+  .mobile-hero-fallback .button-outline {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    border-width: 1px;
+  }
+}
+
+/* hide the mobile fallback by default on larger screens */
+.mobile-hero-fallback { display: none; }

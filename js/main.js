@@ -389,4 +389,32 @@ document.addEventListener("DOMContentLoaded", () => {
       stopVisualizer();
     });
   }
+
+  // Mobile simplified play control (does not start the visualizer, only plays audio)
+  const mobilePlay = document.getElementById('mobile-play');
+  if (mobilePlay && audio) {
+    mobilePlay.addEventListener('click', async () => {
+      try {
+        if (!audioContext) setupAudioAnalyser();
+        if (audioContext && audioContext.state === 'suspended') await audioContext.resume();
+      } catch (e) {
+        console.warn('AudioContext setup failed on mobile play:', e);
+      }
+
+      if (!isPlaying) {
+        audio.currentTime = 0;
+        audio.play().then(() => {
+          isPlaying = true;
+          mobilePlay.textContent = 'Pause chiptune';
+        }).catch(err => {
+          console.error('mobile audio.play() failed:', err);
+          audio.controls = true;
+        });
+      } else {
+        audio.pause();
+        isPlaying = false;
+        mobilePlay.textContent = 'Play chiptune';
+      }
+    });
+  }
 });

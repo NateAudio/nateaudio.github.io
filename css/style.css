@@ -31,14 +31,18 @@ body {
   scroll-behavior: smooth;
 }
 
+/* allow natural scrolling on mobile; overflow:hidden causes layout issues on iOS */
 body {
+  /* keep body locked so `.page` handles scroll-snap as before */
   overflow: hidden;
 }
 
 .page {
-  height: 100vh;
+  /* Use a CSS var-based viewport height to work around mobile browser chrome (iOS) 100vh issues. Keep `height` and `overflow-y: scroll` so scroll-snap works as before. */
+  height: calc(var(--vh, 1vh) * 100);
   scroll-snap-type: y mandatory;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Subtle synthwave grid overlay across the viewport. Non-interactive. */

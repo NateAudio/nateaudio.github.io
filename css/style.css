@@ -644,12 +644,7 @@ body {
   border: none;
   outline: none;
   box-shadow: none;
-  opacity: 1 !important;
-  transition: none !important;
-
-  /* Force circular clipping on iOS Safari */
-  clip-path: circle(50% at 50% 50%);
-  -webkit-clip-path: circle(50% at 50% 50%);
+  mix-blend-mode: normal;
 }
 
   /* Hotspot visible + clickable */
@@ -675,4 +670,5 @@ body {
     z-index: 999 !important;
     position: absolute !important;
   }
+
 }

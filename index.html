@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nate Audio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-logo">Nate Audio</div>
+    <nav class="nav-links">
+      <a href="#hero" class="nav-link">Home</a>
+      <a href="#portfolio" class="nav-link">Portfolio</a>
+      <a href="#blog" class="nav-link">Blog</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <!-- HERO -->
+    <section id="hero" class="section section-hero">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            <span class="hero-name">Nate Audio</span>
+            <span class="hero-cursor">█</span>
+          </h1>
+          <p class="hero-subtitle">
+            Composer • Sound Designer • Musician
+          </p>
+          <p class="hero-tagline">
+            Music and sound for games, podcasts, streams, and indie stories.
+          </p>
+        </div>
+
+        <div class="hero-graphic">
+          <div class="accent-graphic">
+            <canvas id="visualizer"></canvas>
+            <button class="note-hotspot" aria-label="Play a short chiptune">
+              <span class="note-pair">♫♪</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO -->
+    <section id="portfolio" class="section section-portfolio">
+      <div class="section-inner">
+        <h2 class="section-title">Portfolio</h2>
+        <p class="section-description">
+          Selected works for games, podcasts, and digital media.
+        </p>
+
+        <div class="portfolio-grid">
+          <div class="portfolio-item">
+            <h3 class="portfolio-title">Project One</h3>
+            <p class="portfolio-meta">Game soundtrack • 2024</p>
+            <div class="portfolio-embed">
+              <div class="embed-placeholder">SoundCloud embed here</div>
+            </div>
+          </div>
+
+          <div class="portfolio-item">
+            <h3 class="portfolio-title">Project Two</h3>
+            <p class="portfolio-meta">Podcast theme • 2024</p>
+            <div class="portfolio-embed">
+              <div class="embed-placeholder">SoundCloud embed here</div>
+            </div>
+          </div>
+
+          <div class="portfolio-item">
+            <h3 class="portfolio-title">Project Three</h3>
+            <p class="portfolio-meta">Indie film cue • 2023</p>
+            <div class="portfolio-embed">
+              <div class="embed-placeholder">SoundCloud embed here</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOG PREVIEW -->
+    <section id="blog" class="section section-blog">
+      <div class="section-inner">
+        <h2 class="section-title">Blog</h2>
+        <p class="section-description">
+          Thoughts on sound, storytelling, and making things for screens.
+        </p>
+
+        <div class="blog-grid">
+          <article class="blog-card">
+            <h3 class="blog-title">On Writing Music for Quiet Moments</h3>
+            <p class="blog-meta">Jan 2026</p>
+            <p class="blog-excerpt">
+              How restraint, space, and silence can make game worlds feel more alive…
+            </p>
+            <a href="blog.html" class="blog-link">Read more</a>
+          </article>
+
+          <article class="blog-card">
+            <h3 class="blog-title">Designing Sound for Small Screens</h3>
+            <p class="blog-meta">Dec 2025</p>
+            <p class="blog-excerpt">
+              What changes when your music lives on phones, streams, and handhelds…
+            </p>
+            <a href="blog.html" class="blog-link">Read more</a>
+          </article>
+
+          <article class="blog-card">
+            <h3 class="blog-title">Loops That Don’t Feel Like Loops</h3>
+            <p class="blog-meta">Nov 2025</p>
+            <p class="blog-excerpt">
+              Techniques for writing music that can live under a scene for hours…
+            </p>
+            <a href="blog.html" class="blog-link">Read more</a>
+          </article>
+        </div>
+
+        <div class="blog-all">
+          <a href="blog.html" class="button-outline">View all posts</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section section-contact">
+      <div class="section-inner">
+        <h2 class="section-title">Contact</h2>
+        <p class="section-description">
+          If you’re building a game, podcast, stream, or indie story and need music or sound, I’d love to talk.
+        </p>
+        <p class="contact-email">
+          <span>Email:</span> <a href="mailto:nateaudio@proton.me">nateaudio@proton.me</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <audio id="chiptune-audio" src="assets/chiptune-loop.mp3"></audio>
+  <script src="js/main.js"></script>
+</body>
+</html>

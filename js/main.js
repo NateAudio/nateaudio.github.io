@@ -62,18 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initSky();
   });
 
-  // Set a CSS --vh variable so mobile browsers (especially iOS Safari)
-  // can size full-height sections reliably even when the chrome is shown/hidden.
-  function setVhVar() {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-  }
-
-  window.addEventListener('resize', setVhVar);
-  window.addEventListener('orientationchange', setVhVar);
-  // initial set
-  setVhVar();
-
   resizeCanvas();
 
   const stars = [];
@@ -387,34 +375,6 @@ document.addEventListener("DOMContentLoaded", () => {
     audio.addEventListener("ended", () => {
       isPlaying = false;
       stopVisualizer();
-    });
-  }
-
-  // Mobile simplified play control (does not start the visualizer, only plays audio)
-  const mobilePlay = document.getElementById('mobile-play');
-  if (mobilePlay && audio) {
-    mobilePlay.addEventListener('click', async () => {
-      try {
-        if (!audioContext) setupAudioAnalyser();
-        if (audioContext && audioContext.state === 'suspended') await audioContext.resume();
-      } catch (e) {
-        console.warn('AudioContext setup failed on mobile play:', e);
-      }
-
-      if (!isPlaying) {
-        audio.currentTime = 0;
-        audio.play().then(() => {
-          isPlaying = true;
-          mobilePlay.textContent = 'Pause chiptune';
-        }).catch(err => {
-          console.error('mobile audio.play() failed:', err);
-          audio.controls = true;
-        });
-      } else {
-        audio.pause();
-        isPlaying = false;
-        mobilePlay.textContent = 'Play chiptune';
-      }
     });
   }
 });

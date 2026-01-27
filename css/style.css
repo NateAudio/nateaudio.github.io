@@ -31,18 +31,14 @@ body {
   scroll-behavior: smooth;
 }
 
-/* allow natural scrolling on mobile; overflow:hidden causes layout issues on iOS */
 body {
-  /* keep body locked so `.page` handles scroll-snap as before */
   overflow: hidden;
 }
 
 .page {
-  /* Use a CSS var-based viewport height to work around mobile browser chrome (iOS) 100vh issues. Keep `height` and `overflow-y: scroll` so scroll-snap works as before. */
-  height: calc(var(--vh, 1vh) * 100);
+  height: 100vh;
   scroll-snap-type: y mandatory;
   overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Subtle synthwave grid overlay across the viewport. Non-interactive. */
@@ -586,55 +582,3 @@ body {
     gap: 16px;
   }
 }
-
-/* Tight mobile tweaks for small phones (iPhone SE / narrow viewports) */
-@media (max-width: 480px) {
-  .hero-title {
-    font-size: 1.9rem;
-  }
-
-  .hero-tagline {
-    max-width: 92%;
-  }
-
-  .accent-graphic {
-    /* keep the circle readable but not overwhelm small screens */
-    width: clamp(220px, 60vmin, 420px);
-  }
-
-  .accent-graphic.playing::before {
-    inset: -40px;
-    filter: blur(20px);
-  }
-
-  .note-hotspot {
-    bottom: 8%;
-    right: 8%;
-    font-size: 1.1rem;
-  }
-
-  .hero-name {
-    font-size: 0.95rem;
-    letter-spacing: 0.04em;
-  }
-}
-
-/* Show a very simple hero on small phones: hide the heavy visualizer and surface a single play button */
-@media (max-width: 520px) {
-  .accent-graphic { display: none; }
-  .mobile-hero-fallback {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 18px 0;
-  }
-  .mobile-hero-fallback .button-outline {
-    padding: 12px 20px;
-    font-size: 0.95rem;
-    border-width: 1px;
-  }
-}
-
-/* hide the mobile fallback by default on larger screens */
-.mobile-hero-fallback { display: none; }

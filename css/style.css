@@ -596,6 +596,11 @@ body {
 /* ============================
    MOBILE HERO FIXES
    ============================ */
+
+   #mobileHotspot {
+  display: none;
+}
+
 @media (max-width: 768px) {
 
   /* Shrink hero section */
@@ -611,6 +616,10 @@ body {
     flex-direction: column;
     justify-content: center;
   }
+
+  .note-hotspot {
+  display: none;
+}
 
   .hero-content {
     grid-template-columns: 1fr;

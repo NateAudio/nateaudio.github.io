@@ -637,6 +637,7 @@ body {
     border: none;
     outline: none;
     box-shadow: none;
+    -webkit-mask-image: radial-gradient(circle, white 100%, transparent 100%);
   }
 
   /* Hotspot visible + clickable */
@@ -664,6 +665,7 @@ body {
   }
 
 }
+
 
 
 

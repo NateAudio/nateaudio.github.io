@@ -609,6 +609,70 @@ body {
     margin: 0 auto;
   }
 
+  .hero-graphic {
+    margin-top: 24px;
+    justify-content: center;
+  }
+
+  /* Hide the canvas */
+  #visualizer {
+    display: none;
+  }
+
+  /* Hide the circular container */
+  .accent-graphic {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    max-width: 100%;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  /* Remove glow overlay when playing */
+  .accent-graphic.playing {
+    background: none;
+    box-shadow: none;
+  }
+
+  .accent-graphic.playing::before {
+    display: none;
+  }
+
+  /* Optional: shrink the hotspot slightly on mobile */
+  .note-hotspot {
+    font-size: 1.2rem;
+    bottom: auto;
+    right: auto;
+    position: relative;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 768px) {
+
+  /* Center the hero layout */
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 24px;
+  }
+
+  .hero-text {
+    text-align: center;
+  }
+
+  .hero-title {
+    justify-content: center;
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+  }
+
+  .hero-tagline {
+    margin: 0 auto;
+  }
+
   /* Center the graphic */
   .hero-graphic {
     margin-top: 24px;

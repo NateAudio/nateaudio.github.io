@@ -593,57 +593,24 @@ body {
   }
 }
 
-/* ============================
-   MOBILE HERO FIXES
-   ============================ */
-
-/* Hide mobile hotspot by default (desktop) */
+/* Hide mobile hotspot on desktop */
 #mobileHotspot {
   display: none;
 }
 
 @media (max-width: 768px) {
 
-  /* Shrink hero section */
-  .section-hero {
-    padding-top: 64px;
-  }
-
-  .hero {
-    height: auto;
-    padding: 2rem 1rem;
-    overflow: visible;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .hero-content {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    text-align: center;
-  }
-
-  .hero-text {
-    text-align: center;
-  }
-
-  .hero-title {
-    font-size: clamp(1.8rem, 6vw, 3rem);
-    line-height: 1.1;
-    justify-content: center;
-  }
-
-  .hero p {
-    font-size: clamp(1rem, 4vw, 1.4rem);
-  }
-
-  /* Desktop hotspot hidden on mobile */
+  /* Hide desktop hotspot */
   .note-hotspot {
     display: none;
   }
 
-  /* Circle graphic shrinks on mobile */
+  /* Hide canvas */
+  #visualizer {
+    display: none;
+  }
+
+  /* Shrink the circle */
   .accent-graphic {
     width: 240px;
     max-width: 80%;
@@ -655,12 +622,7 @@ body {
     box-shadow: 0 0 12px rgba(60,244,255,0.08);
   }
 
-  /* Hide the canvas on mobile */
-  #visualizer {
-    display: none;
-  }
-
-  /* Mobile hotspot visible + centered under the circle */
+  /* Show mobile hotspot */
   #mobileHotspot {
     display: flex;
     width: 160px;
@@ -675,5 +637,7 @@ body {
     font-size: 1.4rem;
     box-shadow: 0 0 8px rgba(60,244,255,0.2);
   }
+}
+
 }
 

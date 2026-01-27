@@ -14,16 +14,6 @@
   --transition-med: 220ms ease-out;
 }
 
-/*
-  Nate Audio — CSS notes
-
-  - Theme variables are declared in `:root` for easy tuning (colors, accent tones, transitions).
-  - The synthwave grid overlay is provided via `.page::before` and is intentionally placed behind content.
-  - Reactive glows for the nav and hero are driven by CSS custom properties that JS sets at runtime:
-      `--nav-text-shadow`, `--nav-translate`, `--hero-text-shadow`, `--hero-translate`.
-  - Keep layout rules separate from visual effects; avoid per-frame DOM writes — update the CSS vars instead.
-*/
-
 *,
 *::before,
 *::after {
@@ -592,52 +582,3 @@ body {
     gap: 16px;
   }
 }
-
-/* Hide mobile hotspot on desktop */
-#mobileHotspot {
-  display: none;
-}
-
-@media (max-width: 768px) {
-
-  /* Hide desktop hotspot */
-  .note-hotspot {
-    display: none;
-  }
-
-  /* Hide canvas */
-  #visualizer {
-    display: none;
-  }
-
-  /* Shrink the circle */
-  .accent-graphic {
-    width: 240px;
-    max-width: 80%;
-    aspect-ratio: 1 / 1;
-    margin: 0 auto;
-    border-radius: 50%;
-    overflow: hidden;
-    background: rgba(255,255,255,0.02);
-    box-shadow: 0 0 12px rgba(60,244,255,0.08);
-  }
-
-  /* Show mobile hotspot */
-  #mobileHotspot {
-    display: flex;
-    width: 160px;
-    height: 160px;
-    margin: 1rem auto 0;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    align-items: center;
-    justify-content: center;
-    color: var(--accent-cyan);
-    font-size: 1.4rem;
-    box-shadow: 0 0 8px rgba(60,244,255,0.2);
-  }
-}
-
-}
-

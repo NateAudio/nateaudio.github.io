@@ -633,9 +633,9 @@ body {
   }
 
   /* Hide the desktop circular graphic entirely */
-  .accent-graphic {
+  #visualizer {
     display: none;
-  }
+}
 
   /* Hide the canvas */
   #visualizer {

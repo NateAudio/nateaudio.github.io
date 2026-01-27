@@ -591,52 +591,69 @@ body {
   .nav-links {
     gap: 16px;
   }
-  
-  .accent-graphic {
-  width: 260px;
-  max-width: 80%;
-  aspect-ratio: 1 / 1;
-  margin: 0 auto;
-}
-
-#mobileHotspot {
-  width: 200px;
-  height: 200px;
-  margin: 1.5rem auto 0;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent-cyan);
-  font-size: 1.4rem;
-}
 }
 
 /* ============================
    MOBILE HERO FIXES
    ============================ */
 @media (max-width: 768px) {
+
+  /* Shrink hero section */
+  .section-hero {
+    padding-top: 64px;
+  }
+
   .hero {
-    height: 70vh;
+    height: auto;
     padding: 2rem 1rem;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
 
-  .hero h1 {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    text-align: center;
+  }
+
+  .hero-text {
+    text-align: center;
+  }
+
+  .hero-title {
     font-size: clamp(1.8rem, 6vw, 3rem);
     line-height: 1.1;
+    justify-content: center;
   }
 
   .hero p {
     font-size: clamp(1rem, 4vw, 1.4rem);
   }
 
+  /* Hide the desktop circular graphic entirely */
+  .accent-graphic {
+    display: none;
+  }
+
+  /* Hide the canvas */
   #visualizer {
-    display: none; /* Hide canvas on mobile */
+    display: none;
+  }
+
+  /* Mobile hotspot */
+  #mobileHotspot {
+    width: 200px;
+    height: 200px;
+    margin: 1.5rem auto 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-cyan);
+    font-size: 1.4rem;
   }
 }

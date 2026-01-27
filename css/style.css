@@ -624,6 +624,14 @@ body {
     position: relative;
   }
 
+  .canvas-wrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
   /* Canvas fills the circle */
   #visualizer {
   width: 100%;
@@ -636,10 +644,6 @@ body {
   border: none;
   outline: none;
   box-shadow: none;
-
-  /* Force circular clipping on iOS Safari */
-  clip-path: circle(50% at 50% 50%);
-  -webkit-clip-path: circle(50% at 50% 50%);
 }
 
   /* Hotspot visible + clickable */
@@ -665,12 +669,4 @@ body {
     z-index: 999 !important;
     position: absolute !important;
   }
-
 }
-
-
-
-
-
-
-

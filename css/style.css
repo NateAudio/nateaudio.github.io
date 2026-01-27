@@ -582,3 +582,52 @@ body {
     gap: 16px;
   }
 }
+
+/* ============================
+   MOBILE HERO FIXES (REAL)
+   ============================ */
+
+@media (max-width: 768px) {
+
+  /* Center the hero layout */
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 24px;
+  }
+
+  .hero-text {
+    text-align: center;
+  }
+
+  .hero-title {
+    justify-content: center;
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+  }
+
+  .hero-tagline {
+    margin: 0 auto;
+  }
+
+  /* Center the graphic */
+  .hero-graphic {
+    margin-top: 24px;
+    justify-content: center;
+  }
+
+  /* Shrink the circle on mobile */
+  .accent-graphic {
+    width: 260px;
+    max-width: 80%;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  /* Hide the visualizer canvas on mobile */
+  #visualizer {
+    display: none;
+  }
+}
+

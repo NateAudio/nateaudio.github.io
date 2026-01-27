@@ -354,7 +354,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!isPlaying) {
         audio.currentTime = 0;
-        audio.play().catch(() => {});
+        audio.play().catch((err) => {
+          console.error('audio.play() failed:', err);
+          // Reveal native controls as a fallback so the user can start playback manually
+          try {
+            audio.controls = true;
+          } catch (e) {
+            console.warn('Unable to enable audio.controls fallback', e);
+          }
+        });
         isPlaying = true;
         startVisualizer();
       } else {

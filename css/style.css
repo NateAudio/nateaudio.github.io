@@ -639,8 +639,8 @@ body {
   .note-hotspot {
     outline: 2px solid red; /* for testing */
     position: absolute;
-    bottom: 24px;
-    right: 24px;
+    bottom: 32px;
+    right: 32px;
     font-size: 1.4rem;
     z-index: 10;
   }
@@ -660,3 +660,4 @@ body {
   }
 
 }
+

@@ -586,3 +586,35 @@ body {
     gap: 16px;
   }
 }
+
+/* Tight mobile tweaks for small phones (iPhone SE / narrow viewports) */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.9rem;
+  }
+
+  .hero-tagline {
+    max-width: 92%;
+  }
+
+  .accent-graphic {
+    /* keep the circle readable but not overwhelm small screens */
+    width: clamp(220px, 60vmin, 420px);
+  }
+
+  .accent-graphic.playing::before {
+    inset: -40px;
+    filter: blur(20px);
+  }
+
+  .note-hotspot {
+    bottom: 8%;
+    right: 8%;
+    font-size: 1.1rem;
+  }
+
+  .hero-name {
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+  }
+}

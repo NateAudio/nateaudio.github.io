@@ -695,3 +695,49 @@ body {
   }
 }
 
+@media (max-width: 768px) {
+
+  /* Glow halo behind hotspot */
+  .note-hotspot.playing::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160px;
+    height: 160px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(60,244,255,0.15), rgba(255,79,216,0.08));
+    box-shadow:
+      0 0 24px rgba(60,244,255,0.3),
+      0 0 36px rgba(255,79,216,0.2);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Animated waveform line under hotspot */
+  .note-hotspot.playing::after {
+    content: "";
+    position: absolute;
+    bottom: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 16px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="16"><path d="M0,8 Q10,0 20,8 T40,8 T60,8 T80,8" stroke="black" stroke-width="2" fill="none"/></svg>');
+    mask-repeat: no-repeat;
+    mask-size: cover;
+    animation: waveformPulse 1.2s ease-in-out infinite;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  @keyframes waveformPulse {
+    0% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
+    50% { opacity: 1; transform: translateX(-50%) scaleY(1.2); }
+    100% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
+  }
+}
+
+

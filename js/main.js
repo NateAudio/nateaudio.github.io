@@ -62,6 +62,18 @@ document.addEventListener("DOMContentLoaded", () => {
     initSky();
   });
 
+  // Set a CSS --vh variable so mobile browsers (especially iOS Safari)
+  // can size full-height sections reliably even when the chrome is shown/hidden.
+  function setVhVar() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+
+  window.addEventListener('resize', setVhVar);
+  window.addEventListener('orientationchange', setVhVar);
+  // initial set
+  setVhVar();
+
   resizeCanvas();
 
   const stars = [];

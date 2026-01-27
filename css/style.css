@@ -306,7 +306,7 @@ body {
   width: 700px;
   max-width: 100%;
   aspect-ratio: 1 / 1;
-  overflow: visible;
+  overflow: hidden;
   border-radius: 50%;
   background: transparent;
   box-shadow: none;
@@ -597,6 +597,7 @@ body {
    MOBILE HERO FIXES
    ============================ */
 
+/* Hide mobile hotspot by default (desktop) */
 #mobileHotspot {
   display: none;
 }
@@ -615,10 +616,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-  }
-
-  .note-hotspot {
-  display: none;
   }
 
   .hero-content {
@@ -641,40 +638,42 @@ body {
     font-size: clamp(1rem, 4vw, 1.4rem);
   }
 
+  /* Desktop hotspot hidden on mobile */
+  .note-hotspot {
+    display: none;
+  }
+
+  /* Circle graphic shrinks on mobile */
   .accent-graphic {
-  width: 240px;
-  max-width: 80%;
-  aspect-ratio: 1 / 1;
-  margin: 0 auto;
-  border-radius: 50%;
-  overflow: visible;
-  background: rgba(255,255,255,0.02); /* optional subtle backdrop */
-  box-shadow: 0 0 12px rgba(60,244,255,0.08);
-}
+    width: 240px;
+    max-width: 80%;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255,255,255,0.02);
+    box-shadow: 0 0 12px rgba(60,244,255,0.08);
+  }
 
-  /* Hide the desktop circular graphic entirely */
-  #visualizer {
-    display: none;
-}
-
-  /* Hide the canvas */
+  /* Hide the canvas on mobile */
   #visualizer {
     display: none;
   }
 
-  /* Mobile hotspot */
+  /* Mobile hotspot visible + centered under the circle */
   #mobileHotspot {
-  width: 160px;
-  height: 160px;
-  margin: 1rem auto 0;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent-cyan);
-  font-size: 1.4rem;
-  box-shadow: 0 0 8px rgba(60,244,255,0.2);
+    display: flex;
+    width: 160px;
+    height: 160px;
+    margin: 1rem auto 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-cyan);
+    font-size: 1.4rem;
+    box-shadow: 0 0 8px rgba(60,244,255,0.2);
   }
 }
+

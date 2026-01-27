@@ -636,6 +636,7 @@ body {
     background: transparent;
     border: none;
     outline: none;
+    box-shadow: none;
   }
 
   /* Hotspot visible + clickable */
@@ -663,6 +664,7 @@ body {
   }
 
 }
+
 
 
 

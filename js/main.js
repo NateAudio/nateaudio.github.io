@@ -345,7 +345,6 @@ document.addEventListener("DOMContentLoaded", () => {
       animationId = null;
     }
     canvas.style.opacity = "0";
-    stopMobileNotes();
     if (accentGraphic) accentGraphic.classList.remove('playing');
     if (noteHotspot) noteHotspot.classList.remove('playing');
     if (navLogo) {
@@ -362,38 +361,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // resume the idle sky loop for the static background
     if (!staticAnimationId) drawStaticSky();
   }
-
-    // Spawn a floating note on mobile
-  function spawnFloatingNote() {
-    const hotspot = document.querySelector('.note-hotspot');
-    if (!hotspot) return;
-
-    const note = document.createElement('div');
-    note.className = 'floating-note';
-    note.textContent = '♫';
-
-    hotspot.appendChild(note);
-
-    setTimeout(() => {
-      note.remove();
-    }, 1800);
-  }
-
-  let mobileNoteInterval = null;
-
-function startMobileNotes() {
-  if (mobileNoteInterval) return; // already running
-  mobileNoteInterval = setInterval(() => {
-    spawnFloatingNote();
-  }, 300); // one note every 300ms
-}
-
-function stopMobileNotes() {
-  if (mobileNoteInterval) {
-    clearInterval(mobileNoteInterval);
-    mobileNoteInterval = null;
-  }
-}
 
   // Clean up audio resources if the page is unloaded to avoid dangling contexts
   window.addEventListener('beforeunload', () => {
@@ -413,23 +380,19 @@ function stopMobileNotes() {
       }
 
       if (!isPlaying) {
-    audio.currentTime = 0;
-    audio.play().catch((err) => {
-        console.error('audio.play() failed:', err);
-        try {
+        audio.currentTime = 0;
+        audio.play().catch((err) => {
+          console.error('audio.play() failed:', err);
+          // Reveal native controls as a fallback so the user can start playback manually
+          try {
             audio.controls = true;
-        } catch (e) {
+          } catch (e) {
             console.warn('Unable to enable audio.controls fallback', e);
-        }
-    });
-
-    // Spawn floating note on mobile
-    startMobileNotes();
-
-    isPlaying = true;
-    startVisualizer();
-} else {
-
+          }
+        });
+        isPlaying = true;
+        startVisualizer();
+      } else {
         audio.pause();
         isPlaying = false;
         stopVisualizer();
@@ -439,7 +402,6 @@ function stopMobileNotes() {
     audio.addEventListener("ended", () => {
       isPlaying = false;
       stopVisualizer();
-      stopMobileNotes();
     });
   }
 });

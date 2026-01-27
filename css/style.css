@@ -736,42 +736,12 @@ body {
     z-index: 0;
     pointer-events: none;
   }
-  
+
   @keyframes waveformPulse {
     0% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
     50% { opacity: 1; transform: translateX(-50%) scaleY(1.2); }
     100% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
   }
-
-  /* Floating notes effect */
-.note-hotspot.playing .floating-note {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.2rem;
-  color: var(--accent-cyan);
-  opacity: 0;
-  animation: floatUp 1.8s ease-out forwards;
-  pointer-events: none;
-  text-shadow:
-    0 0 6px rgba(60,244,255,0.6),
-    0 0 12px rgba(255,79,216,0.4);
-}
-
-/* Keyframes for upward float */
-@keyframes floatUp {
-  0% {
-    transform: translate(-50%, 10px);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -40px);
-    opacity: 0;
-  }
-}
 }
 
 

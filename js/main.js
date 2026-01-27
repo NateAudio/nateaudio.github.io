@@ -362,6 +362,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!staticAnimationId) drawStaticSky();
   }
 
+    // Spawn a floating note on mobile
+  function spawnFloatingNote() {
+    const hotspot = document.querySelector('.note-hotspot');
+    if (!hotspot) return;
+
+    const note = document.createElement('div');
+    note.className = 'floating-note';
+    note.textContent = '♫';
+
+    hotspot.appendChild(note);
+
+    setTimeout(() => {
+      note.remove();
+    }, 1800);
+  }
+
   // Clean up audio resources if the page is unloaded to avoid dangling contexts
   window.addEventListener('beforeunload', () => {
     if (audioContext && typeof audioContext.close === 'function') {
@@ -380,19 +396,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (!isPlaying) {
-        audio.currentTime = 0;
-        audio.play().catch((err) => {
-          console.error('audio.play() failed:', err);
-          // Reveal native controls as a fallback so the user can start playback manually
-          try {
+    audio.currentTime = 0;
+    audio.play().catch((err) => {
+        console.error('audio.play() failed:', err);
+        try {
             audio.controls = true;
-          } catch (e) {
+        } catch (e) {
             console.warn('Unable to enable audio.controls fallback', e);
-          }
-        });
-        isPlaying = true;
-        startVisualizer();
-      } else {
+        }
+    });
+
+    // Spawn floating note on mobile
+    spawnFloatingNote();
+
+    isPlaying = true;
+    startVisualizer();
+} else {
+
         audio.pause();
         isPlaying = false;
         stopVisualizer();

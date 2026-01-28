@@ -87,20 +87,7 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.nav-logo {
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-size: 1.05rem;
-  color: var(--text);
-  display: inline-block;
-  -webkit-font-smoothing: antialiased;
-  will-change: transform, text-shadow;
-  text-shadow:
-    0 0 8px rgba(60,244,255,0.22),
-    0 0 22px rgba(255,79,216,0.08),
-    0 0 48px rgba(60,244,255,0.06);
-}
+/* collapsed initial nav-logo block (consolidated below) */
 
 .nav-logo {
   /* site title styling and base idle glow; reactive glows use CSS vars set by JS */
@@ -256,12 +243,6 @@ body {
   transition: text-shadow 120ms linear, transform 120ms linear;
   text-shadow: var(--hero-text-shadow, 0 0 8px rgba(60,244,255,0.12), 0 0 20px rgba(255,79,216,0.05));
   transform: translateY(var(--hero-translate, 0px));
-}
-
-/* When playing, disable the CSS idle animation so JS-driven glow is visible */
-.hero-name.playing {
-  animation: none;
-  transition: text-shadow 120ms linear, transform 120ms linear;
 }
 
 .hero-cursor {
@@ -593,6 +574,7 @@ body {
 
 /* ============================
    MOBILE HERO (CLEAN + FINAL)
+   Consolidated mobile rules for clarity and to avoid duplicated blocks
    ============================ */
 
 @media (max-width: 768px) {
@@ -633,38 +615,38 @@ body {
   }
 
   .canvas-wrapper {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  overflow: hidden;
-  position: relative;
-}
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+  }
 
-  /* Canvas fills the circle */
+  /* Canvas fills the circle (mobile-optimized sizing + compositor-safe defaults) */
   #visualizer {
-  width: 100%;
-  height: 100%;
-  display: block;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  box-shadow: none;
-  opacity: 0;
-  transition: opacity 0.6s ease-out;
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    opacity: 0;
+    transition: opacity 0.6s ease-out;
+    mix-blend-mode: normal; /* use normal on mobile to avoid compositor artifacts */
+    pointer-events: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    border-radius: 50%;
+    clip-path: circle(50% at 50% 50%);
+  }
 
-.accent-graphic.playing #visualizer {
-  opacity: 1;
-}
-
-.accent-graphic.playing #visualizer {
-  opacity: 1;
-}
+  .accent-graphic.playing #visualizer {
+    opacity: 1;
+  }
 
   /* Hotspot visible + clickable */
   .note-hotspot {
@@ -681,17 +663,14 @@ body {
     100% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
   }
 
-}
-
-@media (max-width: 768px) {
+  /* Ensure hotspot renders above the visualizer and avoid stacking quirks */
   .accent-graphic > .note-hotspot {
     z-index: 999 !important;
     position: absolute !important;
+    outline: none !important;
   }
-}
 
-/* Mobile compositor fixes: avoid blend/mask/glow artifacts on iOS Safari */
-@media (max-width: 768px) {
+  /* Mobile compositor fixes: avoid blend/mask/glow artifacts on iOS Safari */
   /* Hide the large desktop glow that can render oddly on mobile compositors */
   .accent-graphic.playing::before {
     display: none !important;
@@ -703,17 +682,4 @@ body {
     box-shadow: none !important;
   }
 
-  /* Disable blend modes and masks on the canvas for mobile to prevent
-     rectangular brightening artifacts; keep circular clip-path for safety. */
-  #visualizer {
-    mix-blend-mode: normal !important;
-    -webkit-mask-image: none !important;
-    mask-image: none !important;
-    border-radius: 50% !important;
-    clip-path: circle(50% at 50% 50%) !important;
-  }
-
-  .accent-graphic > .note-hotspot {
-    outline: none !important;
-  }
 }

@@ -322,8 +322,6 @@ body {
   -webkit-border-radius: 50%;
   clip-path: circle(50% at 50% 50%);
   -webkit-clip-path: circle(50% at 50% 50%);
-  mask-image: radial-gradient(circle, black 100%, transparent 100%);
-  -webkit-mask-image: radial-gradient(circle, black 100%, transparent 100%);
   transform: translateZ(0); /* promote to its own layer to avoid repaint glitches */
 }
 

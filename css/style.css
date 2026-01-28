@@ -637,8 +637,8 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 160%;
-  height: 160%;
+  width: 340px;
+  height: 340px;
   transform: translate(-50%, -50%);
   z-index: 1;
   background: transparent;
@@ -650,7 +650,6 @@ body {
   mix-blend-mode: screen;
   pointer-events: none;
 }
-
 
 .accent-graphic.playing #visualizer {
   opacity: 1;
@@ -680,5 +679,6 @@ body {
     position: absolute !important;
   }
 }
+
 
 

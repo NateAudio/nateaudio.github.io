@@ -107,15 +107,18 @@ document.addEventListener("DOMContentLoaded", () => {
   initSky();
 
   function drawStaticSky() {
-    /**
-     * drawStaticSky — idle background loop
-     * Renders a radial background, twinkling stars, and floating note glyphs.
-     * This loop runs while no audio is playing; it is canceled when the visualizer starts.
-     */
     const width = canvas.width / window.devicePixelRatio;
     const height = canvas.height / window.devicePixelRatio;
 
+    // clear everything first
     ctx.clearRect(0, 0, width, height);
+
+    // clip all drawing to a perfect circle
+    ctx.save();
+    const radius = Math.min(width, height) / 2;
+    ctx.beginPath();
+    ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
+    ctx.clip();
 
     const bgGrad = ctx.createRadialGradient(width / 2, 0, 0, width / 2, 0, height * 1.2);
     bgGrad.addColorStop(0, "#151530");
@@ -147,8 +150,11 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.shadowBlur = 0;
     });
 
+    ctx.restore(); // remove the circular clip
+
     staticAnimationId = requestAnimationFrame(drawStaticSky);
   }
+
 
   // Start with the idle sky animation; when audio plays we cancel this.
   drawStaticSky();
@@ -165,15 +171,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function drawScene() {
-    /**
-     * drawScene — audio-driven render loop
-     * Samples frequency data from the AnalyserNode, computes simple band averages
-     * and uses them to drive the sun bands, rings, and reactive UI glows.
-     */
     const width = canvas.width / window.devicePixelRatio;
     const height = canvas.height / window.devicePixelRatio;
 
+    // clear everything first
     ctx.clearRect(0, 0, width, height);
+
+    // clip all drawing to a perfect circle
+    ctx.save();
+    const radius = Math.min(width, height) / 2;
+    ctx.beginPath();
+    ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
+    ctx.clip();
 
     const bgGrad = ctx.createRadialGradient(width / 2, 0, 0, width / 2, 0, height * 1.2);
     bgGrad.addColorStop(0, "#151530");
@@ -319,6 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.fillText(n.char, n.x + wobble, n.y);
       ctx.shadowBlur = 0;
     });
+    ctx.restore(); // remove the circular clip
 
     animationId = requestAnimationFrame(drawScene);
   }

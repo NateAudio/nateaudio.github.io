@@ -11,6 +11,7 @@
 */
 
 document.addEventListener("DOMContentLoaded", () => {
+  const isMobile = window.innerWidth <= 768;
   const canvas = document.getElementById("visualizer");
   const ctx = canvas.getContext("2d");
   const noteHotspot = document.querySelector(".note-hotspot");
@@ -117,12 +118,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ctx.clearRect(0, 0, width, height);
 
-    const bgGrad = ctx.createRadialGradient(width / 2, 0, 0, width / 2, 0, height * 1.2);
-    bgGrad.addColorStop(0, "#151530");
-    bgGrad.addColorStop(0.55, "#050510");
-    bgGrad.addColorStop(1, "#020208");
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, width, height);
+    // Only draw the background gradient on desktop
+if (!isMobile) {
+  const bgGrad = ctx.createRadialGradient(width / 2, 0, 0, width / 2, 0, height * 1.2);
+  bgGrad.addColorStop(0, "#151530");
+  bgGrad.addColorStop(0.55, "#050510");
+  bgGrad.addColorStop(1, "#020208");
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, width, height);
+}
 
     const time = performance.now() / 1000;
 
@@ -175,12 +179,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ctx.clearRect(0, 0, width, height);
 
-    const bgGrad = ctx.createRadialGradient(width / 2, 0, 0, width / 2, 0, height * 1.2);
-    bgGrad.addColorStop(0, "#151530");
-    bgGrad.addColorStop(0.55, "#050510");
-    bgGrad.addColorStop(1, "#020208");
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, width, height);
+    // Only draw the background gradient on desktop
+if (!isMobile) {
+  const bgGrad = ctx.createRadialGradient(width / 2, 0, 0, width / 2, 0, height * 1.2);
+  bgGrad.addColorStop(0, "#151530");
+  bgGrad.addColorStop(0.55, "#050510");
+  bgGrad.addColorStop(1, "#020208");
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, width, height);
+}
 
     let bass = 0;
     let avg = 0;

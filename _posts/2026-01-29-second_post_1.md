@@ -1,5 +1,5 @@
 ---
-title: "My Second Loram Post"
+title: "My Second Lorem Post"
 date: 2026-01-29
 excerpt: "Second Post — Lorem #2!."
 layout: default

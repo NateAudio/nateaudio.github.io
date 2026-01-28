@@ -35,13 +35,30 @@ body {
 html { scroll-padding-top: 84px; }
 
 body {
-  overflow: hidden;
+  /* allow the page or content containers to control scrolling
+     - body-level overflow hidden prevented scrolling on pages without
+       a `.page` wrapper (e.g. blog index and posts). Use auto here
+       and let `.page` / `.post-content` handle their own overflow. */
+  overflow: auto;
 }
 
 .page {
   height: 100vh;
   scroll-snap-type: y mandatory;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure standalone pages (blog index, individual posts) can scroll
+   on mobile/iOS where body may not be scrollable when inner elements
+   were originally relied on. Give the post container full viewport
+   height and native touch scrolling. */
+.post-content {
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 84px; /* account for fixed nav */
 }
 
 /* Subtle synthwave grid overlay across the viewport. Non-interactive. */

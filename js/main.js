@@ -117,13 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const width = canvas.width / window.devicePixelRatio;
     const height = canvas.height / window.devicePixelRatio;
 
-    if (!isMobile) {
     ctx.clearRect(0, 0, width, height);
-    } else {
-      ctx.fillStyle = "rgba(0,0,0,0)";
-      ctx.fillRect(0, 0, width, height);
-    }
-
 
     // Only draw the background gradient on desktop
     if (!isMobile) {

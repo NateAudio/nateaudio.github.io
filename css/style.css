@@ -436,6 +436,17 @@ body {
   font-size: 1rem;
 }
 
+/* Blog title links: use readable site text color for unvisited links,
+   and keep a magenta accent for visited links to match site theme. */
+.blog-title a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+.blog-title a:visited {
+  color: var(--accent-magenta);
+}
+
 .blog-meta {
   margin: 0 0 10px;
   font-size: 0.8rem;

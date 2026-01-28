@@ -315,6 +315,16 @@ body {
   pointer-events: none;
   background: transparent;
   mix-blend-mode: screen;
+  /* Ensure the canvas is clipped to a circle even on iOS Safari where
+     mix-blend-mode or compositing can cause the child to escape the
+     parent's border-radius. Use clip-path and mask fallbacks. */
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  clip-path: circle(50% at 50% 50%);
+  -webkit-clip-path: circle(50% at 50% 50%);
+  mask-image: radial-gradient(circle, black 100%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle, black 100%, transparent 100%);
+  transform: translateZ(0); /* promote to its own layer to avoid repaint glitches */
 }
 
 /* When playing, allow the visualizer to subtly blend into the page and reveal a soft backdrop */
@@ -634,23 +644,25 @@ body {
 
   /* Canvas fills the circle */
   #visualizer {
+  width: 100%;
+  height: 100%;
+  display: block;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 340px;
-  height: 340px;
-  transform: translate(-50%, -50%);
+  inset: 0;
   z-index: 1;
   background: transparent;
   border: none;
   outline: none;
   box-shadow: none;
-  opacity: 1 !important;
-  transition: none !important;
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
   mix-blend-mode: screen;
   pointer-events: none;
 }
 
+.accent-graphic.playing #visualizer {
+  opacity: 1;
+}
 
 .accent-graphic.playing #visualizer {
   opacity: 1;
@@ -680,8 +692,3 @@ body {
     position: absolute !important;
   }
 }
-
-
-
-
-

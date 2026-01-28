@@ -11,7 +11,7 @@
 */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = ('ontouchstart' in window) && window.innerHeight > window.innerWidth;
   const canvas = document.getElementById("visualizer");
   const ctx = canvas.getContext("2d");
   const noteHotspot = document.querySelector(".note-hotspot");
@@ -412,3 +412,4 @@ if (!isMobile) {
     });
   }
 });
+

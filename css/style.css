@@ -668,7 +668,6 @@ body {
 
   /* Hotspot visible + clickable */
   .note-hotspot {
-    outline: 2px solid red; /* for testing */
     position: absolute;
     bottom: 40px;
     right: 40px;
@@ -688,5 +687,33 @@ body {
   .accent-graphic > .note-hotspot {
     z-index: 999 !important;
     position: absolute !important;
+  }
+}
+
+/* Mobile compositor fixes: avoid blend/mask/glow artifacts on iOS Safari */
+@media (max-width: 768px) {
+  /* Hide the large desktop glow that can render oddly on mobile compositors */
+  .accent-graphic.playing::before {
+    display: none !important;
+  }
+
+  /* Tone down playing-state background/glow on mobile */
+  .accent-graphic.playing {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* Disable blend modes and masks on the canvas for mobile to prevent
+     rectangular brightening artifacts; keep circular clip-path for safety. */
+  #visualizer {
+    mix-blend-mode: normal !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+    border-radius: 50% !important;
+    clip-path: circle(50% at 50% 50%) !important;
+  }
+
+  .accent-graphic > .note-hotspot {
+    outline: none !important;
   }
 }

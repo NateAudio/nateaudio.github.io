@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.fill();
     });
 
-    ctx.font = "14px system-ui, -apple-system, sans-serif";
+    ctx.font = CONFIG.NOTE_FONT;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     notes.forEach(n => {

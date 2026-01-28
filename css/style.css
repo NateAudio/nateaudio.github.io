@@ -682,4 +682,18 @@ body {
     box-shadow: none !important;
   }
 
+  /* Reduce vertical padding and avoid forcing 100vh on mobile browsers
+     which can include UI chrome; use dynamic viewport height and allow
+     sections to size naturally to avoid overflow on devices like iPhone */
+  .section {
+    height: auto !important;
+    min-height: 100dvh; /* modern dynamic viewport unit; falls back to 100vh */
+    padding: 72px 16px 20px;
+  }
+
+  /* Slightly reduce hero top padding on small screens to keep content visible */
+  .section-hero {
+    padding-top: 72px;
+  }
+
 }

@@ -1,0 +1,13 @@
+title: Nate Audio
+description: Composer & sound design portfolio
+baseurl: ""        # set to "/repo-name" for project sites, blank for user/org site
+url: "https://nateaudio.github.io"  # update before deploy
+markdown: kramdown
+plugins:
+  - jekyll-feed
+theme: null
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor

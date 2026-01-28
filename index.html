@@ -1,3 +1,6 @@
+---
+layout: null
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -90,36 +93,18 @@
         </p>
 
         <div class="blog-grid">
+          {% for post in site.posts limit:3 %}
           <article class="blog-card">
-            <h3 class="blog-title">On Writing Music for Quiet Moments</h3>
-            <p class="blog-meta">Jan 2026</p>
-            <p class="blog-excerpt">
-              How restraint, space, and silence can make game worlds feel more alive…
-            </p>
-            <a href="blog.html" class="blog-link">Read more</a>
+            <h3 class="blog-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+            <p class="blog-meta">{{ post.date | date: "%b %Y" }}</p>
+            <p class="blog-excerpt">{{ post.excerpt | strip_html | truncate: 160 }}</p>
+            <a href="{{ post.url | relative_url }}" class="blog-link">Read more</a>
           </article>
-
-          <article class="blog-card">
-            <h3 class="blog-title">Designing Sound for Small Screens</h3>
-            <p class="blog-meta">Dec 2025</p>
-            <p class="blog-excerpt">
-              What changes when your music lives on phones, streams, and handhelds…
-            </p>
-            <a href="blog.html" class="blog-link">Read more</a>
-          </article>
-
-          <article class="blog-card">
-            <h3 class="blog-title">Loops That Don’t Feel Like Loops</h3>
-            <p class="blog-meta">Nov 2025</p>
-            <p class="blog-excerpt">
-              Techniques for writing music that can live under a scene for hours…
-            </p>
-            <a href="blog.html" class="blog-link">Read more</a>
-          </article>
+          {% endfor %}
         </div>
 
         <div class="blog-all">
-          <a href="blog.html" class="button-outline">View all posts</a>
+          <a href="{{ '/blog/' | relative_url }}" class="button-outline">View all posts</a>
         </div>
       </div>
     </section>

@@ -74,6 +74,29 @@ html { scroll-padding-top: 84px; }
   opacity: 0.26;
 }
 
+/* Apply the same fixed overlay for individual post pages which use
+   `.post-content` instead of `.page`. This prevents the grid from
+   appearing clipped when a post scrolls beyond the initial viewport. */
+.post-content::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: normal;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(60,244,255,0.08) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgba(255,79,216,0.06) 0 1px, transparent 1px 36px),
+    repeating-linear-gradient(45deg, rgba(60,244,255,0.04) 0 1px, transparent 1px 72px);
+  opacity: 0.26;
+}
+
+/* Ensure post content renders above the fixed overlay */
+.post-content > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* Ensure page children render above the fixed grid overlay */
 .page > * {
   position: relative;
@@ -722,8 +745,27 @@ html { scroll-padding-top: 84px; }
      sections to size naturally to avoid overflow on devices like iPhone */
   .section {
     height: auto !important;
-    min-height: 100dvh; /* modern dynamic viewport unit; falls back to 100vh */
+    /* allow most sections to be at least the viewport, but make the
+       blog section more compact below so its content and the "view
+       all posts" button are visible without extra scroll snaps */
+    min-height: 100dvh;
     padding: 72px 16px 20px;
+  }
+
+  /* Compact the blog section so the three post cards + button fit on one
+     mobile screen without forcing the user to scroll inside the snap */
+  .section-blog {
+    min-height: auto !important;
+    padding: 36px 12px 18px !important;
+  }
+
+  .blog-grid {
+    gap: 12px;
+  }
+
+  .blog-card {
+    padding: 14px;
+    border-radius: 12px;
   }
 
   /* Slightly reduce hero top padding on small screens to keep content visible */

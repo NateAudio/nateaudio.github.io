@@ -34,13 +34,11 @@ body {
 /* Make anchor scrolling account for fixed nav on all pages */
 html { scroll-padding-top: 84px; }
 
-body {
-  /* allow the page or content containers to control scrolling
-     - body-level overflow hidden prevented scrolling on pages without
-       a `.page` wrapper (e.g. blog index and posts). Use auto here
-       and let `.page` / `.post-content` handle their own overflow. */
+ body {
+  /* Prefer native body scrolling on mobile. Add momentum scrolling for iOS. */
   overflow: auto;
-}
+  -webkit-overflow-scrolling: touch;
+ }
 
 .page {
   height: 100vh;
@@ -54,10 +52,10 @@ body {
    were originally relied on. Give the post container full viewport
    height and native touch scrolling. */
 .post-content {
-  min-height: 100vh;
+  /* Let the document body handle scrolling for individual post pages.
+     Keep padding to account for the fixed nav so anchors and content
+     are not hidden beneath the header. */
   box-sizing: border-box;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   padding-top: 84px; /* account for fixed nav */
 }
 

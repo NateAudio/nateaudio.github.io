@@ -253,6 +253,20 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fill();
     ctx.globalAlpha = 1;
 
+    // Soft canvas glow around the sun (drawn on-canvas so mobile shows it reliably)
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const glowOuterR = sunR * 2.4;
+    const glowGrad = ctx.createRadialGradient(sunX, sunY, sunR * 0.4, sunX, sunY, glowOuterR);
+    glowGrad.addColorStop(0, 'rgba(60,244,255,0.06)');
+    glowGrad.addColorStop(0.35, 'rgba(255,79,216,0.04)');
+    glowGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glowGrad;
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, glowOuterR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
     // Replace the previous mountain silhouette + equalizer bars with
     // layered horizontal bands across the sun. Bands respond to audio
     // energy (bass/average) to pulse and shift widths, creating a

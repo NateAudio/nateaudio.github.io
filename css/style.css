@@ -24,7 +24,10 @@ html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
+  /* allow the body to grow with content so background gradients and
+     overlays extend for long posts rather than being clipped to the
+     initial viewport height */
+  min-height: 100%;
   background: radial-gradient(circle at top, #151530 0, #050510 55%, #020208 100%);
   color: var(--text);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
@@ -59,9 +62,11 @@ html { scroll-padding-top: 84px; }
   padding-top: 84px; /* account for fixed nav */
 }
 
-/* Subtle synthwave grid overlay across the viewport. Non-interactive. */
-.page::before {
-  content: "";
+/* Subtle synthwave grid overlay across the viewport. Non-interactive.
+   Use a global DOM element `.grid-overlay` injected into the layout so
+   it always covers the viewport and is not confined by ancestor
+   stacking contexts or transforms. */
+.grid-overlay {
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -74,25 +79,8 @@ html { scroll-padding-top: 84px; }
   opacity: 0.26;
 }
 
-/* Apply the same fixed overlay for individual post pages which use
-   `.post-content` instead of `.page`. This prevents the grid from
-   appearing clipped when a post scrolls beyond the initial viewport. */
-.post-content::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  mix-blend-mode: normal;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(60,244,255,0.08) 0 1px, transparent 1px 32px),
-    repeating-linear-gradient(90deg, rgba(255,79,216,0.06) 0 1px, transparent 1px 36px),
-    repeating-linear-gradient(45deg, rgba(60,244,255,0.04) 0 1px, transparent 1px 72px);
-  opacity: 0.26;
-}
-
-/* Ensure post content renders above the fixed overlay */
-.post-content > * {
+/* Ensure main content stacks above the overlay */
+main, .post-content, .page {
   position: relative;
   z-index: 1;
 }
@@ -756,16 +744,27 @@ html { scroll-padding-top: 84px; }
      mobile screen without forcing the user to scroll inside the snap */
   .section-blog {
     min-height: auto !important;
-    padding: 36px 12px 18px !important;
+    padding: 28px 12px 14px !important;
   }
 
   .blog-grid {
-    gap: 12px;
+    gap: 10px;
   }
 
   .blog-card {
-    padding: 14px;
-    border-radius: 12px;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .blog-title {
+    font-size: 0.95rem;
+  }
+
+  .blog-excerpt {
+    font-size: 0.9rem;
+    line-height: 1.2;
+    max-height: 3.6em; /* clamp excerpt to ~3 lines */
+    overflow: hidden;
   }
 
   /* Slightly reduce hero top padding on small screens to keep content visible */

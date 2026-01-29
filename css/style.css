@@ -744,7 +744,9 @@ main, .post-content, .page {
      mobile screen without forcing the user to scroll inside the snap */
   .section-blog {
     min-height: auto !important;
-    padding: 28px 12px 14px !important;
+    /* Restore slightly larger top padding so the section title isn't
+       hidden beneath the fixed nav when snapping to the blog section. */
+    padding: 36px 12px 18px !important;
   }
 
   .blog-grid {

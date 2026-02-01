@@ -769,6 +769,25 @@ main, .post-content, .page {
     overflow: hidden;
   }
 
+  /* Make the portfolio section match the compact blog layout on mobile */
+  .section-portfolio {
+    min-height: auto !important;
+    padding: 36px 12px 18px !important;
+  }
+
+  .portfolio-grid {
+    gap: 10px;
+  }
+
+  .portfolio-item {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .portfolio-title {
+    font-size: 0.95rem;
+  }
+
   /* Slightly reduce hero top padding on small screens to keep content visible */
   .section-hero {
     padding-top: 72px;

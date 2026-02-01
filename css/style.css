@@ -793,6 +793,37 @@ main, .post-content, .page {
     padding-top: 72px;
   }
 
+  /* Mobile-only snap behavior: make `.page` scroll the stacked sections
+     and force each `.section` to occupy the full dynamic viewport so a
+     single section is visible per snap on mobile devices. This keeps
+     desktop snap behavior unchanged. */
+  .page {
+    height: 100dvh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .section {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 36px 12px 18px;
+  }
+
+  /* Make inner content scrollable if it's taller than the viewport */
+  .section > .section-inner,
+  .section > .page-inner {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(100dvh - 84px);
+  }
+
 }
 
 /* Layout for individual blog post pages rendered with _layouts/default.html */

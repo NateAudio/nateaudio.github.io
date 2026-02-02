@@ -558,6 +558,25 @@ main, .post-content, .page {
   text-align: center;
 }
 
+/* Responsive SoundCloud embeds used in the portfolio */
+.portfolio-embed {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+.soundcloud-iframe {
+  width: 100%;
+  height: 166px;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  .soundcloud-iframe {
+    height: 140px;
+  }
+}
+
 /* CONTACT */
 
 .contact-email span {

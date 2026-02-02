@@ -567,13 +567,13 @@ main, .post-content, .page {
 
 .soundcloud-iframe {
   width: 100%;
-  height: 166px;
+  height: 300px; /* default to SoundCloud's visual player height */
   border: 0;
 }
 
 @media (max-width: 768px) {
   .soundcloud-iframe {
-    height: 140px;
+    height: 220px; /* slightly smaller on mobile */
   }
 }
 

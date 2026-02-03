@@ -812,26 +812,7 @@ main, .post-content, .page {
     padding-top: 72px;
   }
 
-  /* Desktop tweaks: widen the portfolio container so 3-column cards are
-     larger on full-width screens and track titles are more readable. */
-  @media (min-width: 1200px) {
-    .section-portfolio .section-inner {
-      max-width: 1200px;
-    }
-
-    .portfolio-grid {
-      gap: 32px;
-    }
-
-    .portfolio-item {
-      padding: 24px;
-      border-radius: 16px;
-    }
-
-    .portfolio-title {
-      font-size: 1.1rem;
-    }
-  }
+  /* Desktop tweaks were moved outside the mobile block to apply on large screens. */
 
   /* Mobile-only snap behavior: make `.page` scroll the stacked sections
      and force each `.section` to occupy the full dynamic viewport so a
@@ -874,3 +855,24 @@ main, .post-content, .page {
 }
 
 /* test comment */
+
+/* Desktop tweaks: widen the portfolio container so 3-column cards are
+   larger on full-width screens and track titles are more readable. */
+@media (min-width: 1200px) {
+  .section-portfolio .section-inner {
+    max-width: 1200px;
+  }
+
+  .portfolio-grid {
+    gap: 32px;
+  }
+
+  .portfolio-item {
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .portfolio-title {
+    font-size: 1.1rem;
+  }
+}

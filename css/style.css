@@ -869,6 +869,13 @@ main, .post-content, .page {
    behind the nav when the window is resized. */
 .post-content > .section {
   padding-top: 120px;
+  /* Allow standalone pages (like /blog/) to flow naturally instead of
+     forcing each section to be full-viewport and vertically centered.
+     This ensures the top of the content is reachable and not hidden by
+     the fixed nav. */
+  height: auto !important;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 /* test comment */

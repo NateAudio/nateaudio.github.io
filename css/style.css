@@ -34,6 +34,15 @@ body {
   scroll-behavior: smooth;
 }
 
+/* Keep the background visually fixed on large screens so it doesn't
+   appear to 'scroll away' when long pages are scrolled. Avoid forcing
+   this on mobile (performance / UI chrome differences). */
+@media (min-width: 900px) {
+  html, body {
+    background-attachment: fixed;
+  }
+}
+
 /* Make anchor scrolling account for fixed nav on all pages */
 html { scroll-padding-top: 84px; }
 
@@ -852,6 +861,14 @@ main, .post-content, .page {
   padding: 84px 24px 48px;
   max-width: 960px;
   margin: 0 auto;
+}
+
+/* When a section is rendered inside the standalone `post-content` (for
+   pages like `/blog/`), ensure the section title clears the fixed nav by
+   adding extra top padding. This prevents the heading from being hidden
+   behind the nav when the window is resized. */
+.post-content > .section {
+  padding-top: 120px;
 }
 
 /* test comment */

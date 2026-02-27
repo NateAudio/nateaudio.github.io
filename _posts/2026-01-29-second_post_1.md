@@ -5,8 +5,6 @@ excerpt: "Second Post — Lorem #2!."
 layout: default
 ---
 
-
-
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consequat sem id turpis ullamcorper, ut semper diam pretium. Nam metus erat, congue sit amet pretium vitae, pharetra vel lectus. Vestibulum eu luctus ante. Nam in posuere risus. Aliquam accumsan, diam id rhoncus fermentum, est est consectetur nisl, nec iaculis leo tortor sit amet metus. Etiam vitae ultrices dui, ut aliquam velit. Pellentesque a imperdiet sem. Praesent ornare convallis tortor, ut posuere dolor porttitor in. Suspendisse viverra mauris ut finibus vestibulum. Proin et justo ac nisi luctus tempus sit amet id lectus.
 
 Sed purus dui, sodales id tincidunt at, hendrerit in erat. In hac habitasse platea dictumst. Sed nec sollicitudin enim. Etiam eu consectetur arcu. Aliquam sagittis ex convallis rutrum finibus. In laoreet dui tellus. Praesent pharetra, purus ut scelerisque sodales, dolor nunc aliquet lorem, placerat consequat nisi arcu ut est. Morbi nec viverra nibh. Sed enim felis, pellentesque eu consequat in, faucibus vel lacus. Nam lacinia enim id lobortis faucibus. In hac habitasse platea dictumst.

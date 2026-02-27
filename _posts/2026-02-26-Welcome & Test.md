@@ -22,7 +22,7 @@ Whether you're using Ableton, FL Studio, Logic, or a free DAW like LMMS, you can
 
 Here’s a typical compact setup for chiptune production:
 
-![Synth Setup](/assets/blogfiles/images/synth-setup.png)
+<img src="/assets/blogfiles/images/synth-setup.png" alt="Synth Setup" class="post-img-right" />
 
 This includes:
 

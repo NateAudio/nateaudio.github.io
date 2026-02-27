@@ -878,6 +878,27 @@ main, .post-content, .page {
   justify-content: flex-start;
 }
 
+/* Images inserted into posts that should float with wrapped text. Use
+   the `post-img-right` class on an `<img>` tag in the Markdown file to
+   float right on wide screens and stack on small screens. */
+.post-content img.post-img-right {
+  float: right;
+  width: 320px;
+  max-width: 40%;
+  margin: 0 0 16px 24px;
+  border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+  .post-content img.post-img-right {
+    float: none;
+    display: block;
+    margin: 16px auto;
+    width: 80%;
+    max-width: 320px;
+  }
+}
+
 /* test comment */
 
 /* Desktop tweaks: widen the portfolio container so 3-column cards are

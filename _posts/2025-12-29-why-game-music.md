@@ -1,8 +1,10 @@
 ---
-title: "Why Game Music?"
-date: 2025-12-29
-excerpt: "A quick expose on why I love music for games."
+
+title: "Why Game Music?"  
+date: 2025-12-29  
+excerpt: "A quick expose on why I love music for games."  
 layout: default
+
 ---
 
 Creating ambient music for games is about restraint and texture. The goal is to support the player's sense of place without demanding attention — atmosphere should breathe around gameplay rather than compete with it.

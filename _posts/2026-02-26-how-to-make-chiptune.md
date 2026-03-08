@@ -22,24 +22,24 @@ Whether you're using Ableton, FL Studio, Logic, or a free DAW like LMMS, you can
 
 Here’s a typical compact setup for chiptune production:
 
-<img src="/assets/blogfiles/images/synth-setup.png" alt="Synth Setup" class="post-img-right" />
+![Synth Setup](/assets/blogfiles/images/synth-setup.png)
 
 This includes:
 
-- A small MIDI keyboard
-- A DAW running on your laptop
-- A virtual synth plugin (like Magical 8bit Plug or Chipsounds)
-- An audio interface for clean output
+*   A small MIDI keyboard
+*   A DAW running on your laptop
+*   A virtual synth plugin (like Magical 8bit Plug or Chipsounds)
+*   An audio interface for clean output
 
 ---
 
 ## Step-by-Step: Building a Chiptune Track
 
-1. **Choose a basic waveform** — square, triangle, or sawtooth are classic.
-2. **Limit your voices** — old consoles had 3–5 channels max.
-3. **Use pitch bends and arpeggios** — they add movement and texture.
-4. **Keep your drums simple** — noise bursts and short clicks work great.
-5. **Write short loops** — think in 8-bit phrases, not full orchestration.
+1.  **Choose a basic waveform** — square, triangle, or sawtooth are classic.
+2.  **Limit your voices** — old consoles had 3–5 channels max.
+3.  **Use pitch bends and arpeggios** — they add movement and texture.
+4.  **Keep your drums simple** — noise bursts and short clicks work great.
+5.  **Write short loops** — think in 8-bit phrases, not full orchestration.
 
 ---
 
@@ -47,7 +47,7 @@ This includes:
 
 Here’s a basic square wave patch in JavaScript using the Web Audio API:
 
-```js
+```
 const audio = new AudioContext();
 const osc = audio.createOscillator();
 osc.type = "square";

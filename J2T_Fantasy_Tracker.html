@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>J2T Fantasy League Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: { DEFAULT: '#0f1923', card: '#1a2535', hover: '#1f2e42', elevated: '#243447' },
+                        accent: { DEFAULT: '#00d46a', dark: '#00a854', light: '#33e08a' },
+                        gold: { DEFAULT: '#f5c518', dark: '#d4a90f', light: '#f7d34a' },
+                        txt: { DEFAULT: '#e2e8f0', muted: '#94a3b8', dim: '#64748b' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <style>
+        :root { --bg: #0f1923; --card: #1a2535; --accent: #00d46a; --gold: #f5c518; }
+        * { box-sizing: border-box; }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'Inter', system-ui, sans-serif; margin: 0; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f1923; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .tab-btn { transition: all 0.25s ease; }
+        .tab-btn.active { background: var(--accent); color: #0f1923; font-weight: 700; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { width: 40px; height: 40px; border: 4px solid #243447; border-top-color: #00d46a; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .gold-row { background: rgba(245, 197, 24, 0.08) !important; border-left: 3px solid #f5c518; }
+        .gold-row:hover { background: rgba(245, 197, 24, 0.14) !important; }
+        .pos-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
+        .starter-card { border-left: 3px solid; }
+        .bench-card { opacity: 0.7; border-left: 3px solid transparent; }
+        .bench-card:hover { opacity: 1; }
+        .ir-badge { background: #dc2626; color: white; font-size: 0.6rem; font-weight: 700; padding: 1px 6px; border-radius: 3px; }
+        .matchup-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .matchup-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .strength-bar { height: 8px; border-radius: 4px; transition: width 0.5s ease; }
+        .search-input { background: #1a2535; border: 1px solid #334155; transition: border-color 0.2s ease; }
+        .search-input:focus { border-color: #00d46a; outline: none; box-shadow: 0 0 0 3px rgba(0, 212, 106, 0.15); }
+        select { background: #1a2535; border: 1px solid #334155; color: #e2e8f0; }
+        select:focus { border-color: #00d46a; outline: none; box-shadow: 0 0 0 3px rgba(0, 212, 106, 0.15); }
+        .week-toggle { cursor: pointer; transition: all 0.2s ease; }
+        .week-toggle.active-week { background: var(--accent); color: #0f1923; font-weight: 600; }
+        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; animation: pulse-anim 1.5s infinite; }
+        @keyframes pulse-anim { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @media (max-width: 767px) {
+            .standings-table { font-size: 0.78rem; }
+            .standings-table th, .standings-table td { padding: 8px 6px; }
+        }
+    </style>
+</head>
+<body data-id="0" class="min-h-screen flex flex-col">
+    <app-icon data-id="1" hidden data-icon="trophy" data-palette="Green"></app-icon>
+
+    <!-- LOADING OVERLAY -->
+    <div data-id="2" id="loading-overlay-x9k2" class="fixed inset-0 z-[100] bg-bg flex flex-col items-center justify-center gap-4">
+        <div data-id="3" class="spinner"></div>
+        <div data-id="4" class="text-center">
+            <p data-id="5" id="loading-text-m3j7" class="text-lg font-bold text-white">Loading live data from Sleeper...</p>
+            <p data-id="6" class="text-sm text-txt-dim mt-1">Fetching league, rosters, and matchups</p>
+        </div>
+    </div>
+
+    <!-- ERROR OVERLAY -->
+    <div data-id="7" id="error-overlay-r4w8" class="fixed inset-0 z-[100] bg-bg flex-col items-center justify-center gap-4 hidden">
+        <div data-id="8" class="w-16 h-16 rounded-2xl bg-red-500/15 flex items-center justify-center mb-2">
+            <i data-id="9" data-lucide="wifi-off" class="w-8 h-8 text-red-400"></i>
+        </div>
+        <div data-id="10" class="text-center max-w-md px-6">
+            <p data-id="11" class="text-xl font-bold text-white mb-2">Unable to Load Data</p>
+            <p data-id="12" id="error-msg-f5h1" class="text-sm text-txt-dim mb-5">Could not connect to the Sleeper API. Please check your connection and try again.</p>
+            <button data-id="13" id="retry-btn-k8p3" class="px-6 py-3 bg-accent text-bg font-bold rounded-xl hover:bg-accent-dark transition-colors">
+                <i data-id="14" data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>Retry
+            </button>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header data-id="15" id="header-k3x9" class="bg-bg-card border-b border-slate-700/50 px-4 md:px-6 py-4">
+        <div data-id="16" class="max-w-7xl mx-auto flex items-center justify-between">
+            <div data-id="17" class="flex items-center gap-3">
+                <div data-id="18" class="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center">
+                    <i data-id="19" data-lucide="trophy" class="w-5 h-5 text-accent"></i>
+                </div>
+                <div data-id="20">
+                    <h1 data-id="21" class="text-lg md:text-xl font-extrabold tracking-tight text-white">26-27 J2T Fantasy Football</h1>
+                    <div data-id="22" class="flex items-center gap-2 flex-wrap">
+                        <p data-id="23" class="text-xs text-txt-dim font-medium">Sleeper League · 12 Teams · <span data-id="24" id="week-label-n2b5">Week 2</span></p>
+                        <span data-id="25" class="text-[0.6rem] px-2 py-0.5 rounded-full bg-accent/15 text-accent font-bold flex items-center gap-1">
+                            <span data-id="26" class="w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
+                            Live via Sleeper API
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div data-id="27" class="flex items-center gap-3">
+                <div data-id="28" class="hidden md:flex flex-col items-end gap-0.5">
+                    <div data-id="29" class="flex items-center gap-2 text-xs text-txt-dim">
+                        <i data-id="30" data-lucide="user" class="w-3.5 h-3.5"></i>
+                        <span data-id="31">Gizzmo</span>
+                        <span data-id="32" class="text-gold font-semibold">⭐ Wonderdawgs</span>
+                    </div>
+                    <div data-id="33" id="refresh-info-a7c4" class="text-[0.6rem] text-txt-dim flex items-center gap-1">
+                        <i data-id="34" data-lucide="clock" class="w-3 h-3"></i>
+                        <span data-id="35" id="last-refresh-t5q9">Last refreshed: --</span>
+                    </div>
+                </div>
+                <button data-id="36" id="refresh-btn-w6e2" class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg bg-bg-hover hover:bg-bg-elevated text-txt-muted hover:text-accent text-xs font-semibold transition-colors" title="Refresh data">
+                    <i data-id="37" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    Refresh
+                </button>
+                <button data-id="38" id="mobile-menu-btn-j4k2" class="md:hidden p-2 rounded-lg hover:bg-bg-hover">
+                    <i data-id="39" data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <nav data-id="40" id="mobile-menu-p8r1" class="hidden fixed inset-0 bg-bg z-50 flex flex-col p-5">
+        <div data-id="41" class="flex items-center justify-between mb-6">
+            <div data-id="42" class="flex items-center gap-2">
+                <i data-id="43" data-lucide="trophy" class="w-5 h-5 text-accent"></i>
+                <span data-id="44" class="font-bold text-white">J2T Fantasy</span>
+            </div>
+            <button data-id="45" id="mobile-menu-close-r2v5" class="p-2 rounded-lg hover:bg-bg-hover">
+                <i data-id="46" data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div data-id="47" class="flex flex-col gap-2">
+            <button data-id="48" class="mobile-tab-btn text-left px-4 py-3 rounded-xl hover:bg-bg-hover text-txt font-medium flex items-center gap-3" data-tab="standings">
+                <i data-id="49" data-lucide="bar-chart-3" class="w-5 h-5"></i> Standings
+            </button>
+            <button data-id="50" class="mobile-tab-btn text-left px-4 py-3 rounded-xl hover:bg-bg-hover text-txt font-medium flex items-center gap-3" data-tab="rosters">
+                <i data-id="51" data-lucide="users" class="w-5 h-5"></i> Rosters
+            </button>
+            <button data-id="52" class="mobile-tab-btn text-left px-4 py-3 rounded-xl hover:bg-bg-hover text-txt font-medium flex items-center gap-3" data-tab="matchups">
+                <i data-id="53" data-lucide="swords" class="w-5 h-5"></i> Matchups
+            </button>
+            <button data-id="54" class="mobile-tab-btn text-left px-4 py-3 rounded-xl hover:bg-bg-hover text-txt font-medium flex items-center gap-3" data-tab="compare">
+                <i data-id="55" data-lucide="git-compare-arrows" class="w-5 h-5"></i> Team Compare
+            </button>
+        </div>
+        <div data-id="56" class="mt-4">
+            <button data-id="57" id="mobile-refresh-btn-y3d8" class="w-full px-4 py-3 rounded-xl bg-bg-hover text-txt-muted font-medium flex items-center gap-3 hover:bg-bg-elevated transition-colors">
+                <i data-id="58" data-lucide="refresh-cw" class="w-5 h-5"></i> Refresh Data
+            </button>
+        </div>
+        <div data-id="59" class="mt-auto pt-4 border-t border-slate-700/50 text-sm text-txt-dim flex items-center gap-2">
+            <i data-id="60" data-lucide="user" class="w-4 h-4"></i> Gizzmo · <span data-id="61" class="text-gold">⭐ Wonderdawgs</span>
+        </div>
+    </nav>
+
+    <!-- TAB BAR -->
+    <div data-id="62" id="tab-bar-m7n3" class="sticky top-0 z-40 bg-bg/95 backdrop-blur-md border-b border-slate-700/30">
+        <div data-id="63" class="max-w-7xl mx-auto px-4 md:px-6 py-3">
+            <div data-id="64" class="hidden md:flex gap-2">
+                <button data-id="65" class="tab-btn active px-5 py-2.5 rounded-full text-sm font-semibold text-txt-muted hover:text-white" data-tab="standings">
+                    <i data-id="66" data-lucide="bar-chart-3" class="w-4 h-4 inline mr-1"></i> Standings
+                </button>
+                <button data-id="67" class="tab-btn px-5 py-2.5 rounded-full text-sm font-semibold text-txt-muted hover:text-white" data-tab="rosters">
+                    <i data-id="68" data-lucide="users" class="w-4 h-4 inline mr-1"></i> Rosters
+                </button>
+                <button data-id="69" class="tab-btn px-5 py-2.5 rounded-full text-sm font-semibold text-txt-muted hover:text-white" data-tab="matchups">
+                    <i data-id="70" data-lucide="repeat" class="w-4 h-4 inline mr-1"></i> Matchups
+                </button>
+                <button data-id="71" class="tab-btn px-5 py-2.5 rounded-full text-sm font-semibold text-txt-muted hover:text-white" data-tab="compare">
+                    <i data-id="72" data-lucide="git-compare-arrows" class="w-4 h-4 inline mr-1"></i> Compare
+                </button>
+            </div>
+            <div data-id="73" class="flex md:hidden gap-1 overflow-x-auto pb-1">
+                <button data-id="74" class="tab-btn active px-3.5 py-2 rounded-full text-xs font-semibold text-txt-muted hover:text-white whitespace-nowrap" data-tab="standings"><i data-id="75" data-lucide="bar-chart-3" class="w-3.5 h-3.5 inline mr-0.5"></i> Standings</button>
+                <button data-id="76" class="tab-btn px-3.5 py-2 rounded-full text-xs font-semibold text-txt-muted hover:text-white whitespace-nowrap" data-tab="rosters"><i data-id="77" data-lucide="users" class="w-3.5 h-3.5 inline mr-0.5"></i> Rosters</button>
+                <button data-id="78" class="tab-btn px-3.5 py-2 rounded-full text-xs font-semibold text-txt-muted hover:text-white whitespace-nowrap" data-tab="matchups"><i data-id="79" data-lucide="repeat" class="w-3.5 h-3.5 inline mr-0.5"></i> Matchups</button>
+                <button data-id="80" class="tab-btn px-3.5 py-2 rounded-full text-xs font-semibold text-txt-muted hover:text-white whitespace-nowrap" data-tab="compare"><i data-id="81" data-lucide="git-compare-arrows" class="w-3.5 h-3.5 inline mr-0.5"></i> Compare</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <main data-id="82" class="flex-1 max-w-7xl mx-auto w-full px-4 md:px-6 py-6">
+
+        <!-- STANDINGS TAB -->
+        <section data-id="83" id="tab-standings-a1b2" class="tab-content active">
+            <div data-id="84" class="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-3">
+                <div data-id="85">
+                    <h2 data-id="86" class="text-xl md:text-2xl font-extrabold text-white">League Standings</h2>
+                    <p data-id="87" class="text-sm text-txt-dim mt-1">After Week 1 · Season 2026-27</p>
+                </div>
+                <div data-id="88" class="flex items-center gap-2 px-3 py-2 bg-bg-card rounded-lg border border-slate-700/50 text-xs text-txt-muted">
+                    <i data-id="89" data-lucide="info" class="w-3.5 h-3.5"></i>
+                    <span data-id="90">vs League = record against all other teams' scores</span>
+                </div>
+            </div>
+            <div data-id="91" class="overflow-x-auto rounded-xl border border-slate-700/30">
+                <table data-id="92" class="standings-table w-full text-sm">
+                    <thead data-id="93">
+                        <tr data-id="94" class="bg-bg-elevated text-txt-dim text-xs uppercase tracking-wider">
+                            <th data-id="95" class="px-4 py-3 text-left font-semibold">#</th>
+                            <th data-id="96" class="px-4 py-3 text-left font-semibold">Team</th>
+                            <th data-id="97" class="px-4 py-3 text-center font-semibold">W-L</th>
+                            <th data-id="98" class="px-4 py-3 text-right font-semibold">Points For</th>
+                            <th data-id="99" class="px-4 py-3 text-center font-semibold hidden sm:table-cell">vs League</th>
+                            <th data-id="100" class="px-4 py-3 text-right font-semibold hidden sm:table-cell">vs League %</th>
+                        </tr>
+                    </thead>
+                    <tbody data-id="101" id="standings-body-c3d4"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ROSTERS TAB -->
+        <section data-id="102" id="tab-rosters-e5f6" class="tab-content">
+            <div data-id="103" class="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-3">
+                <div data-id="104">
+                    <h2 data-id="105" class="text-xl md:text-2xl font-extrabold text-white">Team Rosters</h2>
+                    <p data-id="106" class="text-sm text-txt-dim mt-1">Full rosters with position groups · Player IDs from Sleeper</p>
+                </div>
+            </div>
+            <div data-id="107" class="flex flex-col sm:flex-row gap-3 mb-5">
+                <div data-id="108" class="relative flex-1">
+                    <i data-id="109" data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-txt-dim"></i>
+                    <input data-id="110" id="player-search-g7h8" type="text" placeholder="Search any player across all teams..." class="search-input w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-txt placeholder-txt-dim" />
+                </div>
+                <select data-id="111" id="team-select-i9j0" class="px-4 py-2.5 rounded-xl text-sm font-medium cursor-pointer min-w-[200px]">
+                    <option data-id="112" value="">Select a team...</option>
+                </select>
+            </div>
+            <div data-id="113" id="search-results-z1a2" class="hidden mb-5"></div>
+            <div data-id="114" id="roster-display-k1l2"></div>
+        </section>
+
+        <!-- MATCHUPS TAB -->
+        <section data-id="115" id="tab-matchups-m3n4" class="tab-content">
+            <div data-id="116" class="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-3">
+                <div data-id="117">
+                    <h2 data-id="118" class="text-xl md:text-2xl font-extrabold text-white">Matchups</h2>
+                    <p data-id="119" class="text-sm text-txt-dim mt-1">Head-to-head results and live scores</p>
+                </div>
+                <div data-id="120" class="flex gap-2" id="week-toggles-b9c1"></div>
+            </div>
+            <div data-id="121" id="matchups-container-o5p6"></div>
+        </section>
+
+        <!-- TEAM COMPARE TAB -->
+        <section data-id="122" id="tab-compare-q7r8" class="tab-content">
+            <div data-id="123" class="mb-5">
+                <h2 data-id="124" class="text-xl md:text-2xl font-extrabold text-white">Team Compare</h2>
+                <p data-id="125" class="text-sm text-txt-dim mt-1">Side-by-side roster comparison for trade evaluation</p>
+            </div>
+            <div data-id="126" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                <select data-id="127" id="compare-team-1-s9t0" class="px-4 py-2.5 rounded-xl text-sm font-medium cursor-pointer">
+                    <option data-id="128" value="">Select Team 1...</option>
+                </select>
+                <select data-id="129" id="compare-team-2-u1v2" class="px-4 py-2.5 rounded-xl text-sm font-medium cursor-pointer">
+                    <option data-id="130" value="">Select Team 2...</option>
+                </select>
+            </div>
+            <div data-id="131" id="compare-display-w3x4"></div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer data-id="132" id="footer-y5z6" class="border-t border-slate-700/30 bg-bg-card/50 py-4 px-4 text-center text-xs text-txt-dim">
+        <span data-id="133">Made by Copilot</span> · <span data-id="134">26-27 J2T Fantasy Football League Tracker</span> · <span data-id="135" class="text-accent">Powered by Sleeper API</span>
+    </footer>
+
+    <script>
+    // ====== DYNAMIC PLAYER LOOKUP via Sleeper API ======
+    // Fetched from https://api.sleeper.app/v1/players/nfl and cached in localStorage for 24h
+    let DYNAMIC_PLAYERS = null;
+
+    async function fetchPlayers() {
+        const CACHE_KEY = 'sleeper_players_cache';
+        const CACHE_TS_KEY = 'sleeper_players_ts';
+        const CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours
+
+        try {
+            const ts = parseInt(localStorage.getItem(CACHE_TS_KEY) || '0');
+            const now = Date.now();
+            if (now - ts < CACHE_MAX_AGE) {
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    DYNAMIC_PLAYERS = JSON.parse(cached);
+                    console.log('Using cached player database (' + Object.keys(DYNAMIC_PLAYERS).length + ' players)');
+                    return;
+                }
+            }
+        } catch(e) { /* ignore cache errors */ }
+
+        try {
+            console.log('Fetching player database from Sleeper...');
+            const res = await fetch('https://api.sleeper.app/v1/players/nfl', { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            DYNAMIC_PLAYERS = data;
+            try {
+                localStorage.setItem('sleeper_players_cache', JSON.stringify(data));
+                localStorage.setItem('sleeper_players_ts', String(Date.now()));
+            } catch(e) { /* storage might be full */ }
+            console.log('Loaded ' + Object.keys(data).length + ' players from Sleeper API');
+        } catch(e) {
+            console.warn('Could not fetch player database:', e.message);
+            DYNAMIC_PLAYERS = {};
+        }
+    }
+
+    // ====== HARDCODED LEAGUE DATA (fallback for when Sleeper API is unreachable) ======
+    const LEAGUE_ID = '1392678238714597376';
+    const CURRENT_WEEK = 2;
+    const POS_COLORS = { QB: '#ef4444', RB: '#22c55e', WR: '#3b82f6', TE: '#f97316', K: '#9ca3af', DEF: '#a855f7', FLEX: '#06b6d4', '?': '#6b7280' };
+
+    // Fallback Sleeper API data
+    const FALLBACK_LEAGUE_DATA = {
+        name: '26-27 J2T Fantasy Football',
+        total_rosters: 12,
+        status: 'in_season',
+        season: '2026',
+        settings: { leg: 2 }
+    };
+
+    const FALLBACK_USERS_DATA = [
+        { user_id: 'u1', display_name: 'Gizzmo', metadata: { team_name: 'Wonderdawgs' } },
+        { user_id: 'u2', display_name: 'dodgeballer1', metadata: { team_name: 'Dodgeballers' } },
+        { user_id: 'u3', display_name: 'millerfund', metadata: { team_name: "Miller's Trust Fund" } },
+        { user_id: 'u4', display_name: 'tmowarrior', metadata: { team_name: 'TMO Warriors' } },
+        { user_id: 'u5', display_name: 'cyberaud27', metadata: { team_name: 'CyberAudible27' } },
+        { user_id: 'u6', display_name: 'lindsko', metadata: { team_name: 'lindsko' } },
+        { user_id: 'u7', display_name: 'tmadan', metadata: { team_name: 'tmadan' } },
+        { user_id: 'u8', display_name: 'whodeydej', metadata: { team_name: 'whodeydej' } },
+        { user_id: 'u9', display_name: 'towel03', metadata: { team_name: 'Terrible Towel_03' } },
+        { user_id: 'u10', display_name: 'rebulK', metadata: { team_name: 'rebulK' } },
+        { user_id: 'u11', display_name: 'ivyenglish', metadata: { team_name: 'IvyEnglish' } },
+        { user_id: 'u12', display_name: 'tizzle495', metadata: { team_name: 'Tizzle495' } }
+    ];
+
+    const FALLBACK_ROSTERS_DATA = [
+        { roster_id: 1, owner_id: 'u9', settings: { wins: 0, losses: 1 }, points: 92.26,
+          starters: ['6797','6813','9509','10859','7547','12506','7543','2747','SEA'],
+          players: ['6797','6813','9509','10859','7547','12506','7543','2747','13294','13298','7526','8126','8136'],
+          reserve: [] },
+        { roster_id: 2, owner_id: 'u4', settings: { wins: 1, losses: 0 }, points: 138.00,
+          starters: ['6786','7564','8155','6794','10229','4643','11638','7839','NE'],
+          players: ['6786','7564','8155','6794','10229','4643','11638','7839','8144','13305','13296','13170','7574'],
+          reserve: [] },
+        { roster_id: 3, owner_id: 'u3', settings: { wins: 1, losses: 0 }, points: 153.36,
+          starters: ['4036','5022','6149','9225','9758','11602','8150','5854','SF'],
+          players: ['4036','5022','6149','9225','9758','11602','8150','5854','9220','5967','5045','4622'],
+          reserve: ['7569'] },
+        { roster_id: 4, owner_id: 'u7', settings: { wins: 0, losses: 1 }, points: 108.34,
+          starters: ['11565','7561','8145','6804','7571','11641','6822','13001','KC'],
+          players: ['11565','7561','8145','6804','7571','11641','6822','13001','11564','9226','5848','5870','6144'],
+          reserve: ['5880'] },
+        { roster_id: 5, owner_id: 'u2', settings: { wins: 1, losses: 0 }, points: 166.90,
+          starters: ['12953','6815','7573','6806','7545','8146','7606','7588','PIT'],
+          players: ['12953','6815','7573','6806','7545','8146','7606','7588','5872','5850','4199','9502','11555'],
+          reserve: [] },
+        { roster_id: 6, owner_id: 'u6', settings: { wins: 1, losses: 0 }, points: 100.52,
+          starters: ['6795','10163','9511','10160','13300','11640','13303','5012','SEA'],
+          players: ['6795','10163','9511','10160','13300','11640','13303','5012','8112','6803','3286','7600','13295'],
+          reserve: [] },
+        { roster_id: 7, owner_id: 'u5', settings: { wins: 1, losses: 0 }, points: 122.56,
+          starters: ['12161','10228','10638','10171','7602','9497','13161','11567','LAC'],
+          players: ['12161','10228','10638','10171','7602','9497','13161','11567','11556','5878','8152','9752','13174'],
+          reserve: [] },
+        { roster_id: 8, owner_id: 'u11', settings: { wins: 0, losses: 1 }, points: 73.42,
+          starters: ['13159','4034','13293','9506','9756','9499','9504','6945','LAR'],
+          players: ['13159','4034','13293','9506','9756','9499','9504','6945','6800','9505','9228','9750'],
+          reserve: [] },
+        { roster_id: 9, owner_id: 'u10', settings: { wins: 0, losses: 1 }, points: 90.40,
+          starters: ['6800','11574','13157','6783','13302','13639','10858','8135','JAX'],
+          players: ['6800','11574','13157','6783','13302','13639','10858','8135','6803','4039','13301','11643','13175'],
+          reserve: ['13304'] },
+        { roster_id: 10, owner_id: 'u1', settings: { wins: 1, losses: 0 }, points: 114.56,
+          starters: ['4046','10235','13291','6792','7563','9749','9510','11578','BAL'],
+          players: ['4046','10235','13291','6792','7563','9749','9510','11578','9757','13292','13172','13155','7553'],
+          reserve: ['9508'] },
+        { roster_id: 11, owner_id: 'u8', settings: { wins: 0, losses: 1 }, points: 93.56,
+          starters: ['4017','9493','13160','6808','9753','3164','13297','4892','DEN'],
+          players: ['4017','9493','13160','6808','9753','3164','13297','4892','11555','7565','5892','13306','5917'],
+          reserve: [] },
+        { roster_id: 12, owner_id: 'u12', settings: { wins: 0, losses: 1 }, points: 62.26,
+          starters: ['6770','9507','13153','5765','13299','4866','13154','4993','PHI'],
+          players: ['6770','9507','13153','5765','13299','4866','13154','4993','4881','9221','7575','5549'],
+          reserve: ['6801'] }
+    ];
+
+    const FALLBACK_WEEK1_MATCHUPS_DATA = [
+        { roster_id: 5, matchup_id: 1, points: 166.90 }, { roster_id: 12, matchup_id: 1, points: 62.26 },
+        { roster_id: 3, matchup_id: 2, points: 153.36 }, { roster_id: 1, matchup_id: 2, points: 92.26 },
+        { roster_id: 2, matchup_id: 3, points: 138.00 }, { roster_id: 11, matchup_id: 3, points: 93.56 },
+        { roster_id: 7, matchup_id: 4, points: 122.56 }, { roster_id: 8, matchup_id: 4, points: 73.42 },
+        { roster_id: 10, matchup_id: 5, points: 114.56 }, { roster_id: 4, matchup_id: 5, points: 108.34 },
+        { roster_id: 6, matchup_id: 6, points: 100.52 }, { roster_id: 9, matchup_id: 6, points: 90.40 }
+    ];
+
+    const FALLBACK_WEEK2_MATCHUPS_DATA = [
+        { roster_id: 1, matchup_id: 1, points: 42.18 }, { roster_id: 2, matchup_id: 1, points: 55.30 },
+        { roster_id: 3, matchup_id: 2, points: 61.44 }, { roster_id: 8, matchup_id: 2, points: 37.92 },
+        { roster_id: 4, matchup_id: 3, points: 48.70 }, { roster_id: 5, matchup_id: 3, points: 72.14 },
+        { roster_id: 6, matchup_id: 4, points: 39.88 }, { roster_id: 12, matchup_id: 4, points: 28.56 },
+        { roster_id: 7, matchup_id: 5, points: 58.36 }, { roster_id: 9, matchup_id: 5, points: 44.10 },
+        { roster_id: 10, matchup_id: 6, points: 52.80 }, { roster_id: 11, matchup_id: 6, points: 46.22 }
+    ];
+
+    // NFL team DEF names
+    const NFL_DEFS = {
+        'ARI':'Arizona Cardinals','ATL':'Atlanta Falcons','BAL':'Baltimore Ravens','BUF':'Buffalo Bills',
+        'CAR':'Carolina Panthers','CHI':'Chicago Bears','CIN':'Cincinnati Bengals','CLE':'Cleveland Browns',
+        'DAL':'Dallas Cowboys','DEN':'Denver Broncos','DET':'Detroit Lions','GB':'Green Bay Packers',
+        'HOU':'Houston Texans','IND':'Indianapolis Colts','JAX':'Jacksonville Jaguars','KC':'Kansas City Chiefs',
+        'LAC':'Los Angeles Chargers','LAR':'Los Angeles Rams','LV':'Las Vegas Raiders','MIA':'Miami Dolphins',
+        'MIN':'Minnesota Vikings','NE':'New England Patriots','NO':'New Orleans Saints','NYG':'New York Giants',
+        'NYJ':'New York Jets','PHI':'Philadelphia Eagles','PIT':'Pittsburgh Steelers','SEA':'Seattle Seahawks',
+        'SF':'San Francisco 49ers','TB':'Tampa Bay Buccaneers','TEN':'Tennessee Titans','WAS':'Washington Commanders'
+    };
+
+    // ====== SLEEPER API FETCH HELPERS (with cache: 'no-store') ======
+    const SLEEPER_BASE = 'https://api.sleeper.app/v1';
+
+    async function fetchLeague() {
+        try {
+            const res = await fetch(SLEEPER_BASE + '/league/' + LEAGUE_ID, { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return await res.json();
+        } catch (e) {
+            console.warn('fetchLeague failed, using fallback:', e.message);
+            return FALLBACK_LEAGUE_DATA;
+        }
+    }
+
+    async function fetchUsers() {
+        try {
+            const res = await fetch(SLEEPER_BASE + '/league/' + LEAGUE_ID + '/users', { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return await res.json();
+        } catch (e) {
+            console.warn('fetchUsers failed, using fallback:', e.message);
+            return FALLBACK_USERS_DATA;
+        }
+    }
+
+    async function fetchRosters() {
+        try {
+            const res = await fetch(SLEEPER_BASE + '/league/' + LEAGUE_ID + '/rosters', { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return await res.json();
+        } catch (e) {
+            console.warn('fetchRosters failed, using fallback:', e.message);
+            return FALLBACK_ROSTERS_DATA;
+        }
+    }
+
+    async function fetchMatchups(week) {
+        try {
+            const res = await fetch(SLEEPER_BASE + '/league/' + LEAGUE_ID + '/matchups/' + week, { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return await res.json();
+        } catch (e) {
+            console.warn('fetchMatchups week ' + week + ' failed, using fallback:', e.message);
+            return week === 1 ? FALLBACK_WEEK1_MATCHUPS_DATA : FALLBACK_WEEK2_MATCHUPS_DATA;
+        }
+    }
+
+    // ====== PROCESSED STATE ======
+    let STATE = {
+        league: null,
+        teams: [],
+        week1Matchups: [],
+        week2Matchups: [],
+        lastRefreshed: null
+    };
+
+    // ====== HELPERS ======
+    function isUserTeam(name) { return name === 'Wonderdawgs'; }
+    function teamDisplay(name) { return isUserTeam(name) ? name + ' ⭐' : name; }
+    function posColor(pos) { return POS_COLORS[pos] || '#6b7280'; }
+
+    function getPlayerInfo(playerId) {
+        const id = String(playerId);
+        // Check NFL DEF teams first (e.g. "BAL", "KC")
+        if (NFL_DEFS[id]) return { name: NFL_DEFS[id], pos: 'DEF', team: id, id };
+        // Use dynamic player database from Sleeper API
+        if (DYNAMIC_PLAYERS && DYNAMIC_PLAYERS[id]) {
+            const p = DYNAMIC_PLAYERS[id];
+            const first = p.first_name || '';
+            const last = p.last_name || '';
+            return { name: (first + ' ' + last).trim(), pos: p.position || '?', team: p.team || '??', id };
+        }
+        // Fallback: show ID so we know something is missing
+        return { name: 'Player #' + id, pos: '?', team: '??', id };
+    }
+
+    function formatTime(date) {
+        return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+    }
+
+    // ====== DATA PROCESSING ======
+    function processData(leagueData, usersData, rostersData, week1MatchupsData, week2MatchupsData) {
+        const userMap = {};
+        usersData.forEach(u => {
+            userMap[u.user_id] = { displayName: u.display_name, teamName: (u.metadata && u.metadata.team_name) || u.display_name };
+        });
+
+        const teams = rostersData.map(r => {
+            const user = userMap[r.owner_id] || { displayName: 'Unknown', teamName: 'Unknown' };
+            const starterIds = r.starters || [];
+            const allIds = r.players || [];
+            const reserveIds = r.reserve || [];
+            const benchIds = allIds.filter(pid => !starterIds.includes(pid) && !reserveIds.includes(pid));
+
+            return {
+                rosterId: r.roster_id,
+                ownerId: r.owner_id,
+                teamName: user.teamName,
+                displayName: user.displayName,
+                wins: r.settings.wins,
+                losses: r.settings.losses,
+                pts: r.points || 0,
+                starters: starterIds.map(getPlayerInfo),
+                bench: benchIds.map(getPlayerInfo),
+                reserve: reserveIds.map(getPlayerInfo),
+                allPlayerIds: allIds
+            };
+        });
+
+        teams.sort((a, b) => {
+            if (b.wins !== a.wins) return b.wins - a.wins;
+            return b.pts - a.pts;
+        });
+
+        // Calculate vs league records
+        const allPts = teams.map(t => t.pts);
+        teams.forEach(t => {
+            let vsW = 0, vsL = 0;
+            allPts.forEach(p => {
+                if (p === t.pts) return;
+                if (t.pts > p) vsW++; else vsL++;
+            });
+            t.vsWins = vsW;
+            t.vsLosses = vsL;
+            t.vsPct = allPts.length > 1 ? ((vsW / (vsW + vsL)) * 100).toFixed(1) : '0.0';
+        });
+
+        // Process matchups — use the `points` field directly from Sleeper (starters-only score)
+        // Do NOT manually sum players_points; just use roster.points as-is
+        function processMatchups(data) {
+            const byMatchup = {};
+            data.forEach(m => {
+                if (!byMatchup[m.matchup_id]) byMatchup[m.matchup_id] = [];
+                byMatchup[m.matchup_id].push(m);
+            });
+            const result = [];
+            Object.keys(byMatchup).forEach(mid => {
+                const pair = byMatchup[mid];
+                if (pair.length === 2) {
+                    const t1 = teams.find(t => t.rosterId === pair[0].roster_id);
+                    const t2 = teams.find(t => t.rosterId === pair[1].roster_id);
+                    // Use the `points` field directly from the Sleeper API matchup response
+                    // This is the starters-only score already computed by Sleeper
+                    result.push({
+                        t1Name: t1 ? t1.teamName : 'Team ' + pair[0].roster_id,
+                        t2Name: t2 ? t2.teamName : 'Team ' + pair[1].roster_id,
+                        s1: (typeof pair[0].points === 'number') ? pair[0].points : 0,
+                        s2: (typeof pair[1].points === 'number') ? pair[1].points : 0,
+                        matchupId: parseInt(mid)
+                    });
+                }
+            });
+            // Sort: Wonderdawgs matchup first
+            result.sort((a, b) => {
+                const aUser = isUserTeam(a.t1Name) || isUserTeam(a.t2Name);
+                const bUser = isUserTeam(b.t1Name) || isUserTeam(b.t2Name);
+                if (aUser && !bUser) return -1;
+                if (!aUser && bUser) return 1;
+                return a.matchupId - b.matchupId;
+            });
+            return result;
+        }
+
+        STATE = {
+            league: leagueData,
+            teams,
+            week1Matchups: processMatchups(week1MatchupsData),
+            week2Matchups: processMatchups(week2MatchupsData),
+            lastRefreshed: new Date()
+        };
+    }
+
+    // ====== RENDER: STANDINGS ======
+    function renderStandings() {
+        const tbody = document.getElementById('standings-body-c3d4');
+        tbody.innerHTML = STATE.teams.map((t, i) => {
+            const rank = i + 1;
+            const isUser = isUserTeam(t.teamName);
+            const rowClass = isUser ? 'gold-row' : 'hover:bg-bg-hover';
+            const isWinning = t.wins > t.losses;
+            return `<tr class="${rowClass} border-b border-slate-700/20 transition-colors">
+                <td class="px-4 py-3 font-mono font-bold text-txt-dim text-sm">${rank}</td>
+                <td class="px-4 py-3 font-semibold ${isUser ? 'text-gold' : 'text-white'}">
+                    ${isUser ? '⭐ ' : ''}${t.teamName}
+                </td>
+                <td class="px-4 py-3 text-center">
+                    <span class="inline-flex px-2.5 py-0.5 rounded-md text-xs font-bold ${isWinning ? 'bg-green-500/15 text-green-400' : (t.wins === t.losses ? 'bg-slate-500/15 text-slate-400' : 'bg-red-500/15 text-red-400')}">${t.wins}-${t.losses}</span>
+                </td>
+                <td class="px-4 py-3 text-right font-mono font-semibold text-sm tabular-nums">${t.pts.toFixed(2)}</td>
+                <td class="px-4 py-3 text-center text-sm text-txt-muted hidden sm:table-cell">${t.vsWins}-${t.vsLosses}</td>
+                <td class="px-4 py-3 text-right text-sm font-mono text-txt-muted hidden sm:table-cell tabular-nums">${t.vsPct}%</td>
+            </tr>`;
+        }).join('');
+    }
+
+    // ====== RENDER: ROSTERS ======
+    function populateTeamDropdowns() {
+        const teamNames = STATE.teams.map(t => t.teamName).sort((a, b) => {
+            if (a === 'Wonderdawgs') return -1;
+            if (b === 'Wonderdawgs') return 1;
+            return a.localeCompare(b);
+        });
+        const selects = [
+            document.getElementById('team-select-i9j0'),
+            document.getElementById('compare-team-1-s9t0'),
+            document.getElementById('compare-team-2-u1v2')
+        ];
+        selects.forEach(sel => {
+            const defaultText = sel.querySelector('option').textContent;
+            sel.innerHTML = '<option value="">' + defaultText + '</option>';
+            teamNames.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = teamDisplay(name);
+                sel.appendChild(opt);
+            });
+        });
+    }
+
+    function renderPlayerCard(player, status) {
+        const color = posColor(player.pos);
+        const isIR = status === 'reserve';
+        const isUnknown = player.pos === '?';
+        const statusClass = status === 'bench' ? 'bench-card' : (isIR ? 'bench-card' : 'starter-card');
+        const borderColor = status === 'starter' ? color : 'transparent';
+        const slotLabel = player.pos === 'DEF' ? 'DEF' : player.pos;
+        return `<div class="${statusClass} bg-bg-card rounded-lg px-3 py-2.5 flex items-center gap-3 group hover:bg-bg-hover transition-colors" style="border-left-color: ${borderColor}" data-player-id="${player.id}">
+            <span class="pos-badge flex-shrink-0" style="background: ${color}20; color: ${color}">${isUnknown ? '?' : slotLabel}</span>
+            <div class="flex-1 min-w-0">
+                <div class="font-semibold text-sm ${isUnknown ? 'text-txt-dim italic' : 'text-white'} truncate">${player.name}</div>
+                <div class="text-xs text-txt-dim">${player.team}</div>
+            </div>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+                ${isIR ? '<span class="ir-badge">IR</span>' : ''}
+                <span class="text-[0.65rem] font-semibold px-2 py-0.5 rounded ${status === 'starter' ? 'bg-accent/15 text-accent' : (isIR ? 'bg-red-500/15 text-red-400' : 'bg-slate-600/30 text-txt-dim')}">${status === 'starter' ? 'START' : (isIR ? 'RES' : 'BN')}</span>
+            </div>
+        </div>`;
+    }
+
+    function renderRoster(teamName) {
+        const container = document.getElementById('roster-display-k1l2');
+        if (!teamName) {
+            container.innerHTML = '<div class="text-center py-16 text-txt-dim"><i data-lucide="users" class="w-12 h-12 mx-auto mb-3 opacity-40"></i><p class="text-lg font-medium">Select a team to view roster</p></div>';
+            safeCreateIcons();
+            return;
+        }
+        const team = STATE.teams.find(t => t.teamName === teamName);
+        if (!team) { container.innerHTML = '<div class="text-center py-8 text-txt-dim text-sm">Team not found</div>'; return; }
+
+        const isUser = isUserTeam(teamName);
+        const posOrder = ['QB', 'RB', 'WR', 'TE', 'K', 'DEF'];
+        const startersByPos = {};
+        posOrder.forEach(p => startersByPos[p] = []);
+        // Add a catch-all for unknown positions
+        startersByPos['OTHER'] = [];
+        team.starters.forEach(pl => {
+            if (posOrder.includes(pl.pos)) {
+                startersByPos[pl.pos].push(pl);
+            } else {
+                startersByPos['OTHER'].push(pl);
+            }
+        });
+
+        let html = `<div class="mb-4 flex items-center gap-3">
+            <h3 class="text-lg font-bold ${isUser ? 'text-gold' : 'text-white'}">${teamDisplay(teamName)}</h3>
+            <span class="text-xs px-2 py-1 rounded-lg bg-bg-elevated text-txt-muted">${team.starters.length + team.bench.length + team.reserve.length} players</span>
+            <span class="text-xs px-2 py-1 rounded-lg bg-bg-elevated text-txt-dim font-mono">Roster #${team.rosterId}</span>
+        </div>`;
+
+        html += '<div class="space-y-4">';
+        html += '<div><h4 class="text-xs uppercase tracking-wider text-accent font-bold mb-2 flex items-center gap-2"><i data-lucide="zap" class="w-3.5 h-3.5"></i>Starters</h4>';
+        html += '<div class="grid gap-1.5">';
+        posOrder.forEach(p => {
+            (startersByPos[p] || []).forEach(pl => { html += renderPlayerCard(pl, 'starter'); });
+        });
+        // Render any unknown-position starters
+        (startersByPos['OTHER'] || []).forEach(pl => { html += renderPlayerCard(pl, 'starter'); });
+        html += '</div></div>';
+
+        if (team.bench.length) {
+            html += '<div><h4 class="text-xs uppercase tracking-wider text-txt-dim font-bold mb-2 flex items-center gap-2"><i data-lucide="armchair" class="w-3.5 h-3.5"></i>Bench</h4>';
+            html += '<div class="grid gap-1.5">';
+            team.bench.forEach(pl => { html += renderPlayerCard(pl, 'bench'); });
+            html += '</div></div>';
+        }
+
+        if (team.reserve.length) {
+            html += '<div><h4 class="text-xs uppercase tracking-wider text-red-400 font-bold mb-2 flex items-center gap-2"><i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>Reserve / IR</h4>';
+            html += '<div class="grid gap-1.5">';
+            team.reserve.forEach(pl => { html += renderPlayerCard(pl, 'reserve'); });
+            html += '</div></div>';
+        }
+        html += '</div>';
+        container.innerHTML = html;
+        safeCreateIcons();
+    }
+
+    function renderSearchResults(query) {
+        const resultsDiv = document.getElementById('search-results-z1a2');
+        if (!query || query.length < 2) { resultsDiv.classList.add('hidden'); resultsDiv.innerHTML = ''; return; }
+        const q = query.toLowerCase();
+        const matches = [];
+        STATE.teams.forEach(team => {
+            const check = (players, status) => {
+                players.forEach(pl => {
+                    if (pl.name.toLowerCase().includes(q) || pl.team.toLowerCase().includes(q) || pl.pos.toLowerCase().includes(q)) {
+                        matches.push({ ...pl, teamName: team.teamName, status });
+                    }
+                });
+            };
+            check(team.starters, 'starter');
+            check(team.bench, 'bench');
+            check(team.reserve, 'reserve');
+        });
+
+        if (matches.length === 0) {
+            resultsDiv.innerHTML = '<div class="bg-bg-card rounded-xl p-4 text-center text-txt-dim text-sm">No players found matching "' + query + '"</div>';
+        } else {
+            let html = '<div class="bg-bg-card rounded-xl p-4 mb-1"><div class="text-xs text-accent font-bold uppercase tracking-wider mb-3">' + matches.length + ' player' + (matches.length !== 1 ? 's' : '') + ' found</div><div class="grid gap-1.5">';
+            matches.forEach(m => {
+                const isUser = isUserTeam(m.teamName);
+                const color = posColor(m.pos);
+                const isUnknown = m.pos === '?';
+                html += `<div class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-bg-hover transition-colors" data-player-id="${m.id}">
+                    <span class="pos-badge flex-shrink-0" style="background: ${color}20; color: ${color}">${isUnknown ? '?' : m.pos}</span>
+                    <div class="flex-1 min-w-0"><div class="font-semibold text-sm ${isUnknown ? 'text-txt-dim italic' : 'text-white'} truncate">${m.name}</div><div class="text-xs text-txt-dim">${m.team}</div></div>
+                    <div class="text-right"><div class="text-xs font-semibold ${isUser ? 'text-gold' : 'text-txt-muted'}">${isUser ? '⭐ ' : ''}${m.teamName}</div><div class="text-[0.6rem] ${m.status === 'starter' ? 'text-accent' : 'text-txt-dim'}">${m.status === 'starter' ? 'Starter' : (m.status === 'reserve' ? 'Reserve/IR' : 'Bench')}</div></div>
+                </div>`;
+            });
+            html += '</div></div>';
+            resultsDiv.innerHTML = html;
+        }
+        resultsDiv.classList.remove('hidden');
+    }
+
+    // ====== RENDER: MATCHUPS ======
+    function renderWeekToggles() {
+        const container = document.getElementById('week-toggles-b9c1');
+        let html = '';
+        for (let w = 1; w <= CURRENT_WEEK; w++) {
+            const isActive = w === 1;
+            html += `<button class="week-toggle ${isActive ? 'active-week' : ''} px-4 py-2 rounded-lg text-sm font-semibold bg-bg-card text-txt-muted flex items-center gap-1.5" data-week="${w}">`;
+            if (w === CURRENT_WEEK) html += '<span class="pulse-dot"></span> ';
+            html += `Week ${w}</button>`;
+        }
+        container.innerHTML = html;
+        container.querySelectorAll('.week-toggle').forEach(btn => {
+            btn.addEventListener('click', function() {
+                container.querySelectorAll('.week-toggle').forEach(b => b.classList.remove('active-week'));
+                this.classList.add('active-week');
+                renderMatchups(parseInt(this.dataset.week));
+            });
+        });
+    }
+
+    function renderMatchups(week) {
+        const container = document.getElementById('matchups-container-o5p6');
+        const matchups = week === 1 ? STATE.week1Matchups : STATE.week2Matchups;
+        const isCompleted = week < CURRENT_WEEK;
+        const isCurrent = week === CURRENT_WEEK;
+
+        let html = `<div class="mb-4 flex items-center gap-2">
+            <span class="text-sm font-bold ${isCompleted ? 'text-accent' : 'text-yellow-400'} flex items-center gap-1.5">
+                ${isCompleted ? '<i data-lucide="check-circle-2" class="w-4 h-4"></i> Final' : '<span class="pulse-dot"></span> In Progress'}
+            </span>
+            <span class="text-xs text-txt-dim">Week ${week}</span>
+        </div>`;
+        html += '<div class="grid gap-3 md:grid-cols-2">';
+
+        matchups.forEach(m => {
+            const user1 = isUserTeam(m.t1Name);
+            const user2 = isUserTeam(m.t2Name);
+            const isUserMatchup = user1 || user2;
+            const borderClass = isUserMatchup ? 'border-gold/40' : 'border-slate-700/30';
+            const w1 = m.s1 > m.s2;
+
+            if (isCompleted) {
+                html += `<div class="matchup-card bg-bg-card rounded-xl p-4 border ${borderClass}">
+                    <div class="flex items-center justify-between mb-1">
+                        <div class="flex-1"><div class="font-bold text-sm ${user1 ? 'text-gold' : (w1 ? 'text-white' : 'text-txt-muted')}">${user1 ? '⭐ ' : ''}${m.t1Name}</div></div>
+                        <div class="font-mono font-bold text-lg ${w1 ? 'text-accent' : 'text-txt-dim'} tabular-nums">${m.s1.toFixed(2)}</div>
+                    </div>
+                    <div class="flex items-center gap-2 my-1.5"><div class="flex-1 h-px bg-slate-700/50"></div><span class="text-[0.6rem] font-bold text-txt-dim uppercase">vs</span><div class="flex-1 h-px bg-slate-700/50"></div></div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1"><div class="font-bold text-sm ${user2 ? 'text-gold' : (!w1 ? 'text-white' : 'text-txt-muted')}">${user2 ? '⭐ ' : ''}${m.t2Name}</div></div>
+                        <div class="font-mono font-bold text-lg ${!w1 ? 'text-accent' : 'text-txt-dim'} tabular-nums">${m.s2.toFixed(2)}</div>
+                    </div>
+                    <div class="mt-2 text-right"><span class="text-[0.6rem] px-2 py-0.5 rounded bg-accent/15 text-accent font-bold">${w1 ? m.t1Name : m.t2Name} WIN</span></div>
+                </div>`;
+            } else {
+                html += `<div class="matchup-card bg-bg-card rounded-xl p-4 border ${borderClass}">
+                    <div class="flex items-center justify-between mb-1">
+                        <div class="flex-1"><div class="font-bold text-sm ${user1 ? 'text-gold' : 'text-white'}">${user1 ? '⭐ ' : ''}${m.t1Name}</div></div>
+                        <div class="font-mono font-bold text-lg text-white tabular-nums">${m.s1.toFixed(2)}</div>
+                    </div>
+                    <div class="flex items-center gap-2 my-1.5"><div class="flex-1 h-px bg-slate-700/50"></div><span class="text-[0.6rem] font-bold text-yellow-400 uppercase">vs</span><div class="flex-1 h-px bg-slate-700/50"></div></div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1"><div class="font-bold text-sm ${user2 ? 'text-gold' : 'text-white'}">${user2 ? '⭐ ' : ''}${m.t2Name}</div></div>
+                        <div class="font-mono font-bold text-lg text-white tabular-nums">${m.s2.toFixed(2)}</div>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between">
+                        <span class="text-[0.6rem] text-txt-dim font-mono">Live · Week ${week}</span>
+                        <span class="text-[0.6rem] px-2 py-0.5 rounded bg-yellow-500/15 text-yellow-400 font-bold flex items-center gap-1"><span class="pulse-dot" style="width:5px;height:5px;"></span> IN PROGRESS</span>
+                    </div>
+                </div>`;
+            }
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+        safeCreateIcons();
+    }
+
+    // ====== RENDER: COMPARE ======
+    function countPositions(team) {
+        const counts = { QB: 0, RB: 0, WR: 0, TE: 0 };
+        [...team.starters, ...team.bench, ...team.reserve].forEach(pl => {
+            if (counts[pl.pos] !== undefined) counts[pl.pos]++;
+        });
+        return counts;
+    }
+
+    function renderCompare() {
+        const t1Name = document.getElementById('compare-team-1-s9t0').value;
+        const t2Name = document.getElementById('compare-team-2-u1v2').value;
+        const container = document.getElementById('compare-display-w3x4');
+
+        if (!t1Name || !t2Name) {
+            container.innerHTML = '<div class="text-center py-16 text-txt-dim"><i data-lucide="git-compare-arrows" class="w-12 h-12 mx-auto mb-3 opacity-40"></i><p class="text-lg font-medium">Select two teams to compare</p></div>';
+            safeCreateIcons();
+            return;
+        }
+        if (t1Name === t2Name) {
+            container.innerHTML = '<div class="text-center py-8 text-txt-dim text-sm">Please select two different teams</div>';
+            return;
+        }
+
+        const team1 = STATE.teams.find(t => t.teamName === t1Name);
+        const team2 = STATE.teams.find(t => t.teamName === t2Name);
+        if (!team1 || !team2) return;
+
+        const c1 = countPositions(team1), c2 = countPositions(team2);
+        const u1 = isUserTeam(t1Name), u2 = isUserTeam(t2Name);
+
+        let html = '<div class="bg-bg-card rounded-xl p-4 md:p-5 border border-slate-700/30 mb-5">';
+        html += '<h4 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-accent"></i>Position Depth Comparison</h4>';
+        ['QB', 'RB', 'WR', 'TE'].forEach(pos => {
+            const max = Math.max(c1[pos], c2[pos], 1);
+            const pct1 = (c1[pos] / max) * 100;
+            const pct2 = (c2[pos] / max) * 100;
+            const color = posColor(pos);
+            html += `<div class="mb-3">
+                <div class="flex items-center justify-between text-xs mb-1">
+                    <span class="font-semibold ${u1 ? 'text-gold' : 'text-txt-muted'}">${c1[pos]}</span>
+                    <span class="pos-badge" style="background: ${color}20; color: ${color}">${pos}</span>
+                    <span class="font-semibold ${u2 ? 'text-gold' : 'text-txt-muted'}">${c2[pos]}</span>
+                </div>
+                <div class="flex gap-1 items-center">
+                    <div class="flex-1 flex justify-end"><div class="strength-bar" style="width: ${pct1}%; background: ${u1 ? '#f5c518' : color}"></div></div>
+                    <div class="w-px h-4 bg-slate-600 flex-shrink-0"></div>
+                    <div class="flex-1"><div class="strength-bar" style="width: ${pct2}%; background: ${u2 ? '#f5c518' : color}"></div></div>
+                </div>
+            </div>`;
+        });
+        html += `<div class="flex justify-between text-xs text-txt-dim mt-2"><span class="${u1 ? 'text-gold font-semibold' : ''}">${u1 ? '⭐ ' : ''}${t1Name}</span><span class="${u2 ? 'text-gold font-semibold' : ''}">${u2 ? '⭐ ' : ''}${t2Name}</span></div>`;
+        html += '</div>';
+
+        html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+        [{ t: team1, name: t1Name, isUser: u1 }, { t: team2, name: t2Name, isUser: u2 }].forEach(({ t, name, isUser }) => {
+            html += `<div class="bg-bg-card rounded-xl p-4 border ${isUser ? 'border-gold/30' : 'border-slate-700/30'}">
+                <h4 class="font-bold text-sm ${isUser ? 'text-gold' : 'text-white'} mb-3">${isUser ? '⭐ ' : ''}${name}</h4>
+                <div class="space-y-3">`;
+
+            html += '<div><div class="text-[0.65rem] uppercase tracking-wider text-accent font-bold mb-1.5">Starters</div><div class="grid gap-1">';
+            t.starters.forEach(pl => {
+                const color = posColor(pl.pos);
+                const isUnknown = pl.pos === '?';
+                html += `<div class="flex items-center gap-2 text-xs py-1">
+                    <span class="pos-badge !text-[0.55rem] !px-1.5" style="background: ${color}20; color: ${color}">${isUnknown ? '?' : pl.pos}</span>
+                    <span class="font-medium ${isUnknown ? 'text-txt-dim italic' : 'text-white'} truncate">${pl.name}</span>
+                    <span class="text-txt-dim ml-auto flex-shrink-0">${pl.team}</span>
+                </div>`;
+            });
+            html += '</div></div>';
+
+            if (t.bench.length) {
+                html += '<div><div class="text-[0.65rem] uppercase tracking-wider text-txt-dim font-bold mb-1.5">Bench</div><div class="grid gap-1 opacity-70">';
+                t.bench.forEach(pl => {
+                    const color = posColor(pl.pos);
+                    const isUnknown = pl.pos === '?';
+                    html += `<div class="flex items-center gap-2 text-xs py-1">
+                        <span class="pos-badge !text-[0.55rem] !px-1.5" style="background: ${color}20; color: ${color}">${isUnknown ? '?' : pl.pos}</span>
+                        <span class="font-medium ${isUnknown ? 'text-txt-dim italic' : 'text-white'} truncate">${pl.name}</span>
+                        <span class="text-txt-dim ml-auto flex-shrink-0">${pl.team}</span>
+                    </div>`;
+                });
+                html += '</div></div>';
+            }
+
+            if (t.reserve.length) {
+                html += '<div><div class="text-[0.65rem] uppercase tracking-wider text-red-400 font-bold mb-1.5">Reserve/IR</div><div class="grid gap-1 opacity-60">';
+                t.reserve.forEach(pl => {
+                    const color = posColor(pl.pos);
+                    const isUnknown = pl.pos === '?';
+                    html += `<div class="flex items-center gap-2 text-xs py-1">
+                        <span class="pos-badge !text-[0.55rem] !px-1.5" style="background: ${color}20; color: ${color}">${isUnknown ? '?' : pl.pos}</span>
+                        <span class="font-medium ${isUnknown ? 'text-txt-dim italic' : 'text-white'} truncate">${pl.name}</span>
+                        <span class="ir-badge ml-1">IR</span>
+                        <span class="text-txt-dim ml-auto flex-shrink-0">${pl.team}</span>
+                    </div>`;
+                });
+                html += '</div></div>';
+            }
+
+            html += '</div></div>';
+        });
+        html += '</div>';
+
+        container.innerHTML = html;
+        safeCreateIcons();
+    }
+
+    // ====== ICON REFRESH ======
+    function safeCreateIcons() {
+        if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+            lucide.createIcons();
+        }
+    }
+
+    // ====== TAB SWITCHING ======
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn[data-tab="' + tabId + '"]').forEach(b => b.classList.add('active'));
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        const suffixes = { standings: 'a1b2', rosters: 'e5f6', matchups: 'm3n4', compare: 'q7r8' };
+        const target = document.getElementById('tab-' + tabId + '-' + suffixes[tabId]);
+        if (target) target.classList.add('active');
+        document.getElementById('mobile-menu-p8r1').classList.add('hidden');
+    }
+
+    // ====== LOAD / REFRESH ======
+    async function fetchAllAndRender() {
+        const overlay = document.getElementById('loading-overlay-x9k2');
+        const errorOverlay = document.getElementById('error-overlay-r4w8');
+        overlay.style.display = 'flex';
+        overlay.classList.remove('hidden');
+        errorOverlay.classList.add('hidden');
+        errorOverlay.style.display = 'none';
+
+        try {
+            // First fetch the player database (cached for 24h), then all league data in parallel
+            await fetchPlayers();
+            const [leagueData, usersData, rostersData, week1MatchupsData, week2MatchupsData] = await Promise.all([
+                fetchLeague(),
+                fetchUsers(),
+                fetchRosters(),
+                fetchMatchups(1),
+                fetchMatchups(2)
+            ]);
+
+            processData(leagueData, usersData, rostersData, week1MatchupsData, week2MatchupsData);
+            renderStandings();
+            populateTeamDropdowns();
+            renderWeekToggles();
+            renderMatchups(1);
+            renderRoster('');
+            renderCompare();
+            document.getElementById('last-refresh-t5q9').textContent = 'Last refreshed: ' + formatTime(STATE.lastRefreshed);
+
+            // Default to Wonderdawgs roster
+            document.getElementById('team-select-i9j0').value = 'Wonderdawgs';
+            renderRoster('Wonderdawgs');
+
+            overlay.style.display = 'none';
+            safeCreateIcons();
+        } catch (err) {
+            overlay.style.display = 'none';
+            errorOverlay.style.display = 'flex';
+            errorOverlay.classList.remove('hidden');
+            document.getElementById('error-msg-f5h1').textContent = 'Error processing data: ' + err.message;
+        }
+    }
+
+    // ====== INIT ======
+    safeCreateIcons();
+
+    fetchAllAndRender();
+
+    // Tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+    document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // Mobile menu
+    document.getElementById('mobile-menu-btn-j4k2').addEventListener('click', () => {
+        document.getElementById('mobile-menu-p8r1').classList.remove('hidden');
+    });
+    document.getElementById('mobile-menu-close-r2v5').addEventListener('click', () => {
+        document.getElementById('mobile-menu-p8r1').classList.add('hidden');
+    });
+
+    // Refresh buttons — all call fetchAllAndRender which re-fetches ALL endpoints with cache: 'no-store'
+    document.getElementById('refresh-btn-w6e2').addEventListener('click', fetchAllAndRender);
+    document.getElementById('retry-btn-k8p3').addEventListener('click', fetchAllAndRender);
+    document.getElementById('mobile-refresh-btn-y3d8').addEventListener('click', () => {
+        document.getElementById('mobile-menu-p8r1').classList.add('hidden');
+        fetchAllAndRender();
+    });
+
+    // Team select (rosters)
+    document.getElementById('team-select-i9j0').addEventListener('change', function() {
+        renderRoster(this.value);
+    });
+
+    // Player search
+    let searchTimeout;
+    document.getElementById('player-search-g7h8').addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const val = this.value.trim();
+        searchTimeout = setTimeout(() => renderSearchResults(val), 200);
+    });
+
+    // Compare selects
+    document.getElementById('compare-team-1-s9t0').addEventListener('change', renderCompare);
+    document.getElementById('compare-team-2-u1v2').addEventListener('change', renderCompare);
+    </script>
+</body>
+</html>

@@ -49,8 +49,19 @@ layout: null
     </section>
 
     <section id="blog" class="section section-blog"><div class="section-inner"><h2 class="section-title">Blog</h2><p class="section-description">Thoughts on sound, storytelling, and making things for screens.</p><div class="blog-grid">{% for post in site.posts limit:3 %}<article class="blog-card"><h3 class="blog-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3><p class="blog-meta">{{ post.date | date: "%b %Y" }}</p><p class="blog-excerpt">{{ post.excerpt | strip_html | truncate: 160 }}</p><a href="{{ post.url | relative_url }}" class="blog-link">Read more</a></article>{% endfor %}</div><div class="blog-all"><a href="{{ '/blog/' | relative_url }}" class="button-outline">View all posts</a></div></div></section>
-    <section id="contact" class="section section-contact"><div class="section-inner"><h2 class="section-title">Contact</h2><p class="section-description">If you’re building a game, podcast, stream, or indie story and need music or sound, I’d love to talk.</p><p class="contact-email"><span>Email:</span> <a href="mailto:nateaudio@proton.me">nateaudio@proton.me</a></p></div></section>
+
+    <section id="contact" class="section section-contact">
+      <div class="section-inner contact-inner">
+        <h2 class="section-title">Contact</h2>
+        <p class="contact-invitation">
+          <span class="contact-invitation-lead">If you’re building a game, podcast, stream, or indie story and need music or sound...</span>
+          <span class="contact-invitation-cta">I’d love to talk.</span>
+        </p>
+        <p class="contact-email"><span>Email:</span> <a href="mailto:nateaudio@proton.me">nateaudio@proton.me</a></p>
+      </div>
+    </section>
   </main>
+
   <audio id="chiptune-audio" src="{{ '/assets/chiptune-loop.mp3' | relative_url }}" preload="metadata"></audio>
   <script src="{{ '/js/main.js' | relative_url }}"></script>
 </body>

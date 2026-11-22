@@ -1,6 +1,7 @@
 /* ============================================================
    Nate Audio - Hero Atmosphere 2.0 v4
    Global grid + short-page background repair
+   Contact invitation layout
    ============================================================ */
 
 :root {
@@ -21,9 +22,6 @@
   box-sizing: border-box;
 }
 
-/* The document root owns the one continuous site background.
-   Body stays transparent so short posts cannot expose a second copy
-   of the gradient underneath and create a horizontal band. */
 html {
   min-height: 100%;
   scroll-padding-top: 84px;
@@ -42,13 +40,7 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* ------------------------------------------------------------
-   Global synthwave grid
-
-   Standalone/blog pages already receive .grid-overlay from
-   _layouts/default.html. The homepage gets the same texture from
-   body::before so the grid is part of the whole Nate Audio world.
-   ------------------------------------------------------------ */
+/* Global synthwave grid */
 .grid-overlay,
 body::before {
   content: "";
@@ -57,21 +49,9 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background-image:
-    repeating-linear-gradient(
-      0deg,
-      rgba(60, 244, 255, 0.035) 0 1px,
-      transparent 1px 32px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(255, 79, 216, 0.028) 0 1px,
-      transparent 1px 36px
-    ),
-    repeating-linear-gradient(
-      45deg,
-      rgba(60, 244, 255, 0.018) 0 1px,
-      transparent 1px 72px
-    );
+    repeating-linear-gradient(0deg, rgba(60, 244, 255, 0.035) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgba(255, 79, 216, 0.028) 0 1px, transparent 1px 36px),
+    repeating-linear-gradient(45deg, rgba(60, 244, 255, 0.018) 0 1px, transparent 1px 72px);
   opacity: 0.55;
 }
 
@@ -128,12 +108,7 @@ body::before {
   justify-content: space-between;
   padding: 0 32px;
   backdrop-filter: blur(12px);
-  background: linear-gradient(
-    to bottom,
-    rgba(5, 5, 16, 0.88),
-    rgba(5, 5, 16, 0.4),
-    transparent
-  );
+  background: linear-gradient(to bottom, rgba(5, 5, 16, 0.88), rgba(5, 5, 16, 0.4), transparent);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
@@ -200,16 +175,8 @@ body::before {
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(
-      ellipse at 72% 58%,
-      rgba(60, 244, 255, var(--wash-cyan, 0.012)),
-      transparent 38%
-    ),
-    radial-gradient(
-      ellipse at 83% 42%,
-      rgba(255, 79, 216, var(--wash-magenta, 0.010)),
-      transparent 32%
-    );
+    radial-gradient(ellipse at 72% 58%, rgba(60, 244, 255, var(--wash-cyan, 0.012)), transparent 38%),
+    radial-gradient(ellipse at 83% 42%, rgba(255, 79, 216, var(--wash-magenta, 0.010)), transparent 32%);
 }
 
 #visualizer {
@@ -249,11 +216,7 @@ body::before {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   animation: hero-idle 3s ease-in-out infinite;
-  text-shadow: var(
-    --hero-shadow,
-    0 0 8px rgba(60, 244, 255, 0.12),
-    0 0 20px rgba(255, 79, 216, 0.05)
-  );
+  text-shadow: var(--hero-shadow, 0 0 8px rgba(60, 244, 255, 0.12), 0 0 20px rgba(255, 79, 216, 0.05));
   transform: translateY(var(--hero-y, 0));
 }
 
@@ -297,23 +260,16 @@ body::before {
   color: rgba(60, 244, 255, 0.72);
   font-size: 1.36rem;
   letter-spacing: -0.15em;
-  text-shadow:
-    0 0 5px rgba(60, 244, 255, 0.42),
-    0 0 9px rgba(255, 79, 216, 0.20);
+  text-shadow: 0 0 5px rgba(60, 244, 255, 0.42), 0 0 9px rgba(255, 79, 216, 0.20);
   animation: trigger-float 3.8s ease-in-out infinite;
-  transition:
-    color 250ms ease,
-    text-shadow 250ms ease,
-    transform 250ms ease;
+  transition: color 250ms ease, text-shadow 250ms ease, transform 250ms ease;
 }
 
 .note-hotspot:hover,
 .note-hotspot:focus-visible {
   color: rgba(245, 245, 247, 0.98);
   transform: scale(1.1);
-  text-shadow:
-    0 0 10px rgba(60, 244, 255, 0.95),
-    0 0 18px rgba(255, 79, 216, 0.65);
+  text-shadow: 0 0 10px rgba(60, 244, 255, 0.95), 0 0 18px rgba(255, 79, 216, 0.65);
   outline: none;
 }
 
@@ -358,18 +314,13 @@ body::before {
 }
 
 .blog-card {
-  transition:
-    box-shadow 220ms ease,
-    border-color 220ms ease,
-    transform 220ms ease;
+  transition: box-shadow 220ms ease, border-color 220ms ease, transform 220ms ease;
 }
 
 .blog-card:hover {
   transform: translateY(-2px);
   border-color: rgba(60, 244, 255, 0.6);
-  box-shadow:
-    0 0 18px rgba(60, 244, 255, 0.2),
-    0 0 26px rgba(255, 79, 216, 0.2);
+  box-shadow: 0 0 18px rgba(60, 244, 255, 0.2), 0 0 26px rgba(255, 79, 216, 0.2);
 }
 
 .blog-title,
@@ -428,9 +379,7 @@ body::before {
 
 .button-outline:hover {
   border-color: var(--cyan);
-  box-shadow:
-    0 0 14px rgba(60, 244, 255, 0.2),
-    0 0 20px rgba(255, 79, 216, 0.2);
+  box-shadow: 0 0 14px rgba(60, 244, 255, 0.2), 0 0 20px rgba(255, 79, 216, 0.2);
 }
 
 .section-portfolio .section-inner {
@@ -458,6 +407,32 @@ body::before {
 
 .contact-email span {
   color: var(--muted);
+}
+
+/* Contact invitation */
+.contact-inner {
+  max-width: 1100px;
+}
+
+.contact-invitation {
+  margin: 0 auto 24px;
+  color: var(--muted);
+  line-height: 1.55;
+  text-align: center;
+}
+
+.contact-invitation-lead,
+.contact-invitation-cta {
+  display: block;
+}
+
+/* Desktop keeps the entire lead sentence deliberately on one line. */
+.contact-invitation-lead {
+  white-space: nowrap;
+}
+
+.contact-invitation-cta {
+  margin-top: 12px;
 }
 
 /* Standalone blog pages */
@@ -512,15 +487,11 @@ body::before {
 /* Animations */
 @keyframes hero-idle {
   0%, 100% {
-    text-shadow:
-      0 0 8px rgba(60, 244, 255, 0.12),
-      0 0 20px rgba(255, 79, 216, 0.05);
+    text-shadow: 0 0 8px rgba(60, 244, 255, 0.12), 0 0 20px rgba(255, 79, 216, 0.05);
     transform: translateY(0);
   }
   50% {
-    text-shadow:
-      0 0 18px rgba(60, 244, 255, 0.36),
-      0 0 40px rgba(255, 79, 216, 0.12);
+    text-shadow: 0 0 18px rgba(60, 244, 255, 0.36), 0 0 40px rgba(255, 79, 216, 0.12);
     transform: translateY(-2px);
   }
 }
@@ -531,9 +502,7 @@ body::before {
     transform: translateY(0);
   }
   50% {
-    text-shadow:
-      0 0 8px rgba(60, 244, 255, 0.22),
-      0 0 18px rgba(255, 79, 216, 0.08);
+    text-shadow: 0 0 8px rgba(60, 244, 255, 0.22), 0 0 18px rgba(255, 79, 216, 0.08);
     transform: translateY(-1px);
   }
 }
@@ -621,6 +590,11 @@ body::before {
     height: 220px;
   }
 
+  /* Tablets and phones can wrap the long first sentence naturally. */
+  .contact-invitation-lead {
+    white-space: normal;
+  }
+
   .post-content img.post-img-right {
     float: none;
     display: block;
@@ -682,6 +656,15 @@ body::before {
 
   .section-description {
     margin-bottom: 18px;
+  }
+
+  .contact-invitation {
+    max-width: 34rem;
+    margin-bottom: 22px;
+  }
+
+  .contact-invitation-cta {
+    margin-top: 10px;
   }
 
   .post-content {

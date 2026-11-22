@@ -1,1 +1,22 @@
-.github/copilot-instructions.md
+# ============================================================
+# Nate Audio - Git Ignore Rules
+# ============================================================
+
+# Jekyll-generated website.
+# Jekyll rebuilds this directory from the source files.
+_site/
+
+# Jekyll metadata/cache files.
+.jekyll-cache/
+.jekyll-metadata
+
+# Bundler-installed dependencies, if stored inside the project.
+vendor/
+.bundle/
+
+# Node dependencies, if JavaScript tooling is added later.
+node_modules/
+
+# Local operating-system/editor clutter.
+.DS_Store
+Thumbs.db

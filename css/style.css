@@ -1,923 +1,242 @@
+/* ============================================================
+   Nate Audio - Hero Atmosphere 2.0 v4
+   ============================================================ */
+
 :root {
   --bg: #050510;
-  --bg-alt: #080818;
   --text: #f5f5f7;
   --muted: #9a9ab0;
-  --accent-cyan: #3cf4ff;
-  --accent-magenta: #ff4fd8;
-  --accent-soft: rgba(60, 244, 255, 0.2);
-  --accent-soft-magenta: rgba(255, 79, 216, 0.2);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --card-bg: rgba(10, 10, 25, 0.9);
-  --nav-blur: 12px;
-  --transition-fast: 150ms ease-out;
-  --transition-med: 220ms ease-out;
+  --cyan: #3cf4ff;
+  --magenta: #ff4fd8;
+  --violet: #8c5cff;
+  --orange: #ff9a5a;
+  --card: rgba(10, 10, 25, 0.9);
+  --border: rgba(255, 255, 255, 0.06);
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 84px; }
+html, body {
   margin: 0;
-  padding: 0;
-  /* allow the body to grow with content so background gradients and
-     overlays extend for long posts rather than being clipped to the
-     initial viewport height */
   min-height: 100%;
   background: radial-gradient(circle at top, #151530 0, #050510 55%, #020208 100%);
   color: var(--text);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   scroll-behavior: smooth;
 }
+body { overflow: auto; -webkit-overflow-scrolling: touch; }
 
-/* Keep the background visually fixed on large screens so it doesn't
-   appear to 'scroll away' when long pages are scrolled. Avoid forcing
-   this on mobile (performance / UI chrome differences). */
-@media (min-width: 900px) {
-  html, body {
-    background-attachment: fixed;
-  }
-}
-
-/* Make anchor scrolling account for fixed nav on all pages */
-html { scroll-padding-top: 84px; }
-
- body {
-  /* Prefer native body scrolling on mobile. Add momentum scrolling for iOS. */
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
- }
-
-.page {
-  height: 100vh;
-  scroll-snap-type: y mandatory;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Ensure standalone pages (blog index, individual posts) can scroll
-   on mobile/iOS where body may not be scrollable when inner elements
-   were originally relied on. Give the post container full viewport
-   height and native touch scrolling. */
-.post-content {
-  /* Let the document body handle scrolling for individual post pages.
-     Keep padding to account for the fixed nav so anchors and content
-     are not hidden beneath the header. */
-  box-sizing: border-box;
-  padding-top: 84px; /* account for fixed nav */
-}
-
-/* Subtle synthwave grid overlay across the viewport. Non-interactive.
-   Use a global DOM element `.grid-overlay` injected into the layout so
-   it always covers the viewport and is not confined by ancestor
-   stacking contexts or transforms. */
-.grid-overlay {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0; /* sit behind page content; nav remains at 10 */
-  mix-blend-mode: normal;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(60,244,255,0.08) 0 1px, transparent 1px 32px),
-    repeating-linear-gradient(90deg, rgba(255,79,216,0.06) 0 1px, transparent 1px 36px),
-    repeating-linear-gradient(45deg, rgba(60,244,255,0.04) 0 1px, transparent 1px 72px);
-  opacity: 0.26;
-}
-
-/* Ensure main content stacks above the overlay */
-main, .post-content, .page {
-  position: relative;
-  z-index: 1;
-}
-
-/* Ensure page children render above the fixed grid overlay */
-.page > * {
-  position: relative;
-  z-index: 1;
-}
-
-
-
-/* NAV */
-
-.nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  z-index: 10;
-  backdrop-filter: blur(var(--nav-blur));
-  background: linear-gradient(
-    to bottom,
-    rgba(5, 5, 16, 0.85),
-    rgba(5, 5, 16, 0.4),
-    transparent
-  );
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-/* collapsed initial nav-logo block (consolidated below) */
-
-.nav-logo {
-  /* site title styling and base idle glow; reactive glows use CSS vars set by JS */
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-size: 1.05rem;
-  display: inline-block;
-  -webkit-font-smoothing: antialiased;
-  will-change: transform, text-shadow;
-  color: var(--muted);
-  animation: nav-glow-idle 2.6s ease-in-out infinite;
-  text-shadow: var(--nav-text-shadow, 0 0 8px rgba(60,244,255,0.22), 0 0 22px rgba(255,79,216,0.08), 0 0 48px rgba(60,244,255,0.06));
-  transform: translateY(var(--nav-translate, 0px));
-}
-
-/* Ensure the linked site title inherits the intended color (avoid default link purple) */
-.nav-logo a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@keyframes nav-glow-idle {
-  0% { text-shadow: 0 0 4px rgba(60,244,255,0.12), 0 0 10px rgba(255,79,216,0.05); transform: translateY(0); }
-  50% { text-shadow: 0 0 8px rgba(60,244,255,0.22), 0 0 18px rgba(255,79,216,0.08); transform: translateY(-1px); }
-  100% { text-shadow: 0 0 4px rgba(60,244,255,0.12), 0 0 10px rgba(255,79,216,0.05); transform: translateY(0); }
-}
-
-@keyframes nav-glow-pulse {
-  0% { text-shadow: 0 0 6px rgba(60,244,255,0.22), 0 0 18px rgba(255,79,216,0.08); transform: translateY(0); }
-  50% { text-shadow: 0 0 18px rgba(60,244,255,0.6), 0 0 36px rgba(255,79,216,0.28); transform: translateY(-2px); }
-  100% { text-shadow: 0 0 6px rgba(60,244,255,0.22), 0 0 18px rgba(255,79,216,0.08); transform: translateY(0); }
-}
-
-.nav-logo.playing {
-  color: var(--text);
-  animation: nav-glow-pulse 1.8s ease-in-out infinite;
-}
-
-.nav-links {
-  display: flex;
-  gap: 24px;
-}
-
-.nav-link {
-  position: relative;
-  font-size: 0.9rem;
-  color: var(--muted);
-  text-decoration: none;
-  padding-bottom: 4px;
-  transition: color var(--transition-fast);
-}
-
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 0;
-  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
-  box-shadow: 0 0 8px rgba(255, 79, 216, 0.6);
-  transition: width var(--transition-med);
-}
-
-.nav-link:hover {
-  color: var(--text);
-}
-
-.nav-link:hover::after {
-  width: 100%;
-}
-
-/* SECTIONS */
-
+.page { height: 100vh; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
 .section {
+  position: relative;
   height: 100vh;
   scroll-snap-align: start;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 96px 24px 32px;
+  overflow: hidden;
 }
+.section-inner { width: 100%; max-width: 960px; text-align: center; }
+.section-title { margin: 0 0 8px; font-size: 1.6rem; }
+.section-description { max-width: 520px; margin: 0 auto 32px; color: var(--muted); }
 
-.section-hero {
-  padding-top: 96px;
+/* Navigation */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 20;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  backdrop-filter: blur(12px);
+  background: linear-gradient(to bottom, rgba(5,5,16,.88), rgba(5,5,16,.4), transparent);
+  border-bottom: 1px solid rgba(255,255,255,.04);
 }
-
-.section-inner {
-  max-width: 960px;
-  width: 100%;
-  text-align: center;
-}
-
-.section-title {
-  font-size: 1.6rem;
-  margin-bottom: 8px;
-}
-
-.section-description {
+.nav-logo {
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
   color: var(--muted);
-  max-width: 520px;
-  margin: 0 auto 32px;
+  animation: nav-idle 2.6s ease-in-out infinite;
+  text-shadow: var(--nav-shadow, 0 0 8px rgba(60,244,255,.2));
+  transform: translateY(var(--nav-y, 0));
 }
+.nav-logo.playing { animation: none; color: var(--text); }
+.nav-links { display: flex; gap: 24px; }
+.nav-link { position: relative; color: var(--muted); font-size: .9rem; text-decoration: none; padding-bottom: 4px; }
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--magenta));
+  box-shadow: 0 0 8px rgba(255,79,216,.6);
+  transition: width 220ms ease;
+}
+.nav-link:hover::after, .nav-link:focus-visible::after { width: 100%; }
 
-/* HERO */
-
+/* Hero */
+.section-hero { isolation: isolate; }
+.section-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 72% 58%, rgba(60,244,255,var(--wash-cyan,.012)), transparent 38%),
+    radial-gradient(ellipse at 83% 42%, rgba(255,79,216,var(--wash-magenta,.010)), transparent 32%);
+}
+#visualizer { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; }
 .hero-content {
-  max-width: 1100px;
+  position: relative;
+  z-index: 4;
   width: 100%;
+  max-width: 1100px;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
   gap: 48px;
   align-items: center;
 }
-
-.hero-text {
-  text-align: left;
-}
-
-.hero-title {
-  font-size: 2.6rem;
-  margin: 0 0 8px;
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.hero-name {
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* Hero title synthwave glow (idle + reactive) */
-@keyframes hero-glow-idle {
-  0% {
-    text-shadow: 0 0 8px rgba(60,244,255,0.12), 0 0 20px rgba(255,79,216,0.05);
-    transform: translateY(0);
-  }
-  50% {
-    text-shadow: 0 0 18px rgba(60,244,255,0.36), 0 0 40px rgba(255,79,216,0.12);
-    transform: translateY(-2px);
-  }
-  100% {
-    text-shadow: 0 0 8px rgba(60,244,255,0.12), 0 0 20px rgba(255,79,216,0.05);
-    transform: translateY(0);
-  }
-}
-
+.hero-text { text-align: left; }
+.hero-title { display: flex; align-items: baseline; gap: 8px; margin: 0 0 8px; font-size: 2.6rem; }
 .hero-name {
   display: inline-block;
-  will-change: transform, text-shadow;
-  animation: hero-glow-idle 3s ease-in-out infinite;
-}
-
-/* allow JS to drive reactive glow via CSS vars when `.playing` is present */
-.hero-name.playing {
-  animation: none;
-  transition: text-shadow 120ms linear, transform 120ms linear;
-  text-shadow: var(--hero-text-shadow, 0 0 8px rgba(60,244,255,0.12), 0 0 20px rgba(255,79,216,0.05));
-  transform: translateY(var(--hero-translate, 0px));
-}
-
-.hero-cursor {
-  font-size: 1.4rem;
-  color: var(--accent-cyan);
-  opacity: 0.8;
-  animation: cursorBlink 1.1s steps(1, end) infinite;
-}
-
-.hero-subtitle {
-  margin: 0 0 12px;
-  color: var(--muted);
-}
-
-.hero-tagline {
-  margin: 0;
-  color: var(--muted);
-  max-width: 420px;
-}
-
-/* VISUALIZER BOX (800 x 500, responsive) */
-
-.hero-graphic {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.accent-graphic {
-  position: relative;
-  /* make the graphic circular: use a square container and full border-radius */
-  width: 700px;
-  max-width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  border-radius: 50%;
-  background: transparent;
-  box-shadow: none;
-}
-
-/* Canvas sits inside, fades in when playing */
-
-#visualizer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  opacity: 0;
-  transition: opacity 0.6s ease-out;
-  pointer-events: none;
-  background: transparent;
-  mix-blend-mode: screen;
-  /* Ensure the canvas is clipped to a circle even on iOS Safari where
-     mix-blend-mode or compositing can cause the child to escape the
-     parent's border-radius. Use clip-path and mask fallbacks. */
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-  clip-path: circle(50% at 50% 50%);
-  -webkit-clip-path: circle(50% at 50% 50%);
-  transform: translateZ(0); /* promote to its own layer to avoid repaint glitches */
-}
-
-/* When playing, allow the visualizer to subtly blend into the page and reveal a soft backdrop */
-.accent-graphic.playing {
-  background: radial-gradient(circle at top, rgba(21,21,48,0.12) 0, rgba(5,5,16,0.12) 55%, rgba(2,2,8,0.12) 100%);
-  box-shadow:
-    0 12px 40px rgba(60, 244, 255, 0.06),
-    0 28px 80px rgba(60, 244, 255, 0.04),
-    0 8px 60px rgba(255, 79, 216, 0.04),
-    0 0 120px rgba(255, 79, 216, 0.06);
-}
-
-/* Large, diffused glow that extends beyond the container */
-.accent-graphic.playing::before {
-  content: "";
-  position: absolute;
-  inset: -64px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(60,244,255,0.09) 0%, rgba(255,79,216,0.05) 35%, transparent 60%);
-  filter: blur(30px);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Ensure the canvas and hotspot sit above the glow */
-.accent-graphic > * {
-  position: relative;
-  z-index: 1;
-}
-
-.note-hotspot {
-  z-index: 2;
-}
-
-/* HOTSPOT */
-
-.note-hotspot {
-  position: absolute;
-  bottom: 18%;
-  right: 18%;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: var(--text);
-  font-size: 1.4rem;
-  text-shadow:
-    0 0 6px rgba(60, 244, 255, 0.7),
-    0 0 10px rgba(255, 79, 216, 0.7);
-  transition:
-    transform 220ms ease-out,
-    text-shadow 220ms ease-out,
-    opacity 220ms ease-out;
-  opacity: 0.95;
-}
-
-.note-hotspot:hover {
-  transform: scale(1.05);
-  text-shadow:
-    0 0 12px rgba(60, 244, 255, 0.9),
-    0 0 18px rgba(255, 79, 216, 0.9);
-}
-
-.note-pair {
-  display: inline-block;
-}
-
-/* Small click animation for the three eighth-note characters */
-@keyframes hotspot-bounce {
-  0% { transform: none; }
-  30% { transform: translateY(-8px) rotate(-6deg) scale(1.06); }
-  60% { transform: translateY(3px) rotate(4deg) scale(0.98); }
-  100% { transform: none; }
-}
-
-.note-hotspot.clicked .note-pair {
-  animation: hotspot-bounce 650ms cubic-bezier(.2,.9,.3,1);
-}
-
-/* Continuous subtle pulse while audio is playing */
-@keyframes hotspot-pulse {
-  0% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 4px rgba(60,244,255,0.35)); }
-  50% { transform: translateY(-6px) scale(1.06); filter: drop-shadow(0 0 10px rgba(60,244,255,0.45)); }
-  100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 4px rgba(60,244,255,0.35)); }
-}
-
-.note-hotspot.playing .note-pair {
-  animation: hotspot-pulse 900ms ease-in-out infinite;
-}
-
-/* BLOG */
-
-.blog-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-}
-
-.blog-card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid var(--border-subtle);
-  text-align: left;
-  transition:
-    box-shadow var(--transition-med),
-    border-color var(--transition-med),
-    transform var(--transition-med);
-}
-
-.blog-card:hover {
-  border-color: rgba(60, 244, 255, 0.6);
-  box-shadow:
-    0 0 18px var(--accent-soft),
-    0 0 26px var(--accent-soft-magenta);
-  transform: translateY(-2px);
-}
-
-.blog-title {
-  margin: 0 0 6px;
-  font-size: 1rem;
-}
-
-/* Blog title links: use readable site text color for unvisited links,
-   and keep a magenta accent for visited links to match site theme. */
-.blog-title a {
-  color: var(--text);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-.blog-title a:visited {
-  color: var(--accent-magenta);
-}
-
-.blog-meta {
-  margin: 0 0 10px;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.blog-excerpt {
-  margin: 0 0 12px;
-  color: var(--muted);
-}
-
-.blog-link {
-  font-size: 0.85rem;
-  color: var(--accent-cyan);
-  text-decoration: none;
-}
-
-.blog-link:hover {
-  text-decoration: underline;
-}
-
-.blog-all {
-  margin-top: 24px;
-}
-
-.button-outline {
-  display: inline-block;
-  padding: 8px 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--text);
-  text-decoration: none;
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
+  letter-spacing: .06em;
   text-transform: uppercase;
-  transition:
-    border-color var(--transition-med),
-    box-shadow var(--transition-med),
-    color var(--transition-med),
-    background var(--transition-med);
+  animation: hero-idle 3s ease-in-out infinite;
+  text-shadow: var(--hero-shadow, 0 0 8px rgba(60,244,255,.12), 0 0 20px rgba(255,79,216,.05));
+  transform: translateY(var(--hero-y,0));
 }
+.hero-name.playing { animation: none; }
+.hero-cursor { font-size: 1.4rem; color: var(--cyan); opacity: .8; animation: cursor-blink 1.1s steps(1,end) infinite; }
+.hero-subtitle { margin: 0 0 12px; color: var(--muted); }
+.hero-tagline { max-width: 560px; margin: 0; color: var(--muted); line-height: 1.45; }
+.hero-atmosphere { position: relative; min-height: 430px; }
 
-.button-outline:hover {
-  border-color: var(--accent-cyan);
-  box-shadow:
-    0 0 14px var(--accent-soft),
-    0 0 20px var(--accent-soft-magenta);
-  background: rgba(5, 5, 16, 0.9);
-}
-
-/* PORTFOLIO */
-
-.portfolio-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-}
-
-.portfolio-item {
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid var(--border-subtle);
-}
-
-.portfolio-title {
-  margin: 0 0 6px;
-  font-size: 1rem;
-}
-
-.portfolio-meta {
-  margin: 0 0 10px;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.embed-placeholder {
-  border-radius: 10px;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  padding: 16px;
-  font-size: 0.8rem;
-  color: var(--muted);
-  text-align: center;
-}
-
-/* Responsive SoundCloud embeds used in the portfolio */
-.portfolio-embed {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-}
-
-.soundcloud-iframe {
-  width: 100%;
-  height: 300px; /* default to SoundCloud's visual player height */
+/* Easter egg trigger. It belongs to the constellation at rest; hover reveals it. */
+.note-hotspot {
+  position: absolute;
+  right: 17%;
+  bottom: 26%;
+  z-index: 8;
+  padding: 10px;
   border: 0;
+  background: none;
+  cursor: pointer;
+  color: rgba(60,244,255,.72);
+  font-size: 1.36rem;
+  letter-spacing: -.15em;
+  text-shadow: 0 0 5px rgba(60,244,255,.42), 0 0 9px rgba(255,79,216,.20);
+  animation: trigger-float 3.8s ease-in-out infinite;
+  transition: color 250ms ease, text-shadow 250ms ease, transform 250ms ease;
 }
-
-@media (max-width: 768px) {
-  .soundcloud-iframe {
-    height: 220px; /* slightly smaller on mobile */
-  }
+.note-hotspot:hover, .note-hotspot:focus-visible {
+  color: rgba(245,245,247,.98);
+  transform: scale(1.1);
+  text-shadow: 0 0 10px rgba(60,244,255,.95), 0 0 18px rgba(255,79,216,.65);
+  outline: none;
 }
+.note-hotspot.playing { animation: trigger-playing 1.4s ease-in-out infinite; }
 
-/* CONTACT */
-
-.contact-email span {
-  color: var(--muted);
+.hero-whisper {
+  position: absolute;
+  left: 18%;
+  top: 48%;
+  margin: 0;
+  font-family: Consolas, "Lucida Console", "Courier New", monospace;
+  font-size: .82rem;
+  letter-spacing: .08em;
+  color: rgba(60,244,255,.80);
+  opacity: .50;
+  text-shadow: 0 0 4px rgba(60,244,255,.18);
+  animation: whisper-color 8s ease-in-out infinite;
+  transition: opacity 800ms ease;
 }
+.section-hero.playing .hero-whisper { opacity: .18; }
 
-.contact-email a {
-  color: var(--accent-cyan);
-  text-decoration: none;
+/* Existing site sections */
+.blog-grid, .portfolio-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; }
+.blog-card, .portfolio-item { padding: 20px; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: 16px; }
+.blog-card { transition: box-shadow 220ms ease, border-color 220ms ease, transform 220ms ease; }
+.blog-card:hover { transform: translateY(-2px); border-color: rgba(60,244,255,.6); box-shadow: 0 0 18px rgba(60,244,255,.2), 0 0 26px rgba(255,79,216,.2); }
+.blog-title, .portfolio-title { margin: 0 0 6px; font-size: 1rem; }
+.blog-title a { color: var(--text); text-decoration: none; }
+.blog-title a:visited { color: var(--magenta); }
+.blog-meta, .portfolio-meta { margin: 0 0 10px; color: var(--muted); font-size: .8rem; }
+.blog-excerpt { margin: 0 0 12px; color: var(--muted); }
+.blog-link, .contact-email a { color: var(--cyan); text-decoration: none; }
+.blog-link:hover, .contact-email a:hover { text-decoration: underline; }
+.blog-all { margin-top: 24px; }
+.button-outline { display: inline-block; padding: 8px 18px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; color: var(--text); font-size: .85rem; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
+.button-outline:hover { border-color: var(--cyan); box-shadow: 0 0 14px rgba(60,244,255,.2), 0 0 20px rgba(255,79,216,.2); }
+.section-portfolio .section-inner { max-width: 1200px; }
+.soundcloud-iframe { width: 100%; height: 300px; border: 0; }
+.soundcloud-credit { overflow: hidden; color: #ccc; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.soundcloud-credit a { color: #ccc; text-decoration: none; }
+.contact-email span { color: var(--muted); }
+
+/* Standalone blog pages */
+.post-content { max-width: 960px; margin: 0 auto; padding: 100px 24px 48px; line-height: 1.7; }
+.post-content > .section { height: auto !important; min-height: auto !important; padding: 28px 0 48px; align-items: flex-start; overflow: visible; }
+.post-content a { color: var(--cyan); }
+.post-content img { max-width: 100%; height: auto; border-radius: 10px; }
+.post-content img.post-img-right { float: right; width: 320px; max-width: 40%; margin: 0 0 16px 24px; }
+.post-content pre { overflow-x: auto; padding: 16px; border: 1px solid var(--border); border-radius: 10px; background: rgba(0,0,0,.35); }
+.post-content blockquote { margin-left: 0; padding: 4px 0 4px 18px; border-left: 3px solid var(--magenta); color: var(--muted); }
+
+@keyframes hero-idle {
+  0%,100% { text-shadow: 0 0 8px rgba(60,244,255,.12), 0 0 20px rgba(255,79,216,.05); transform: translateY(0); }
+  50% { text-shadow: 0 0 18px rgba(60,244,255,.36), 0 0 40px rgba(255,79,216,.12); transform: translateY(-2px); }
 }
-
-.contact-email a:hover {
-  text-decoration: underline;
+@keyframes nav-idle {
+  0%,100% { text-shadow: 0 0 4px rgba(60,244,255,.12); transform: translateY(0); }
+  50% { text-shadow: 0 0 8px rgba(60,244,255,.22), 0 0 18px rgba(255,79,216,.08); transform: translateY(-1px); }
 }
-
-/* ANIMATIONS */
-
-@keyframes cursorBlink {
-  0%, 49% {
-    opacity: 1;
-  }
-  50%, 100% {
-    opacity: 0;
-  }
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 900px) {
-  .hero-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .hero-text {
-    text-align: center;
-  }
-
-  .hero-tagline {
-    margin: 0 auto;
-  }
-
-  .hero-graphic {
-    margin-top: 24px;
-  }
-
-  .blog-grid,
-  .portfolio-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .nav {
-    padding: 0 16px;
-  }
-
-  .nav-links {
-    gap: 16px;
-  }
-}
-
-/* ============================
-   MOBILE HERO (CLEAN + FINAL)
-   Consolidated mobile rules for clarity and to avoid duplicated blocks
-   ============================ */
-
-@media (max-width: 768px) {
-
-  /* Center hero layout */
-  .hero-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: 24px;
-  }
-
-  .hero-text {
-    text-align: center;
-  }
-
-  .hero-title {
-    justify-content: center;
-    font-size: clamp(1.8rem, 7vw, 2.6rem);
-  }
-
-  .hero-tagline {
-    margin: 0 auto;
-  }
-
-  .hero-graphic {
-    margin-top: 24px;
-    justify-content: center;
-  }
-
-  /* Full circular visualizer, scaled down */
-  .accent-graphic {
-    width: 260px;
-    height: 260px;
-    margin: 0 auto;
-    border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .canvas-wrapper {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* Canvas fills the circle (mobile-optimized sizing + compositor-safe defaults) */
-  #visualizer {
-    width: 100%;
-    height: 100%;
-    display: block;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    box-shadow: none;
-    opacity: 0;
-    transition: opacity 0.6s ease-out;
-    mix-blend-mode: normal; /* use normal on mobile to avoid compositor artifacts */
-    pointer-events: none;
-    -webkit-mask-image: none;
-    mask-image: none;
-    border-radius: 50%;
-    clip-path: circle(50% at 50% 50%);
-  }
-
-  .accent-graphic.playing #visualizer {
-    opacity: 1;
-  }
-
-  /* Hotspot visible + clickable */
-  .note-hotspot {
-    position: absolute;
-    bottom: 40px;
-    right: 40px;
-    font-size: 1.4rem;
-    z-index: 10;
-  }
-
-  @keyframes waveformPulse {
-    0% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
-    50% { opacity: 1; transform: translateX(-50%) scaleY(1.2); }
-    100% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
-  }
-
-  /* Ensure hotspot renders above the visualizer and avoid stacking quirks */
-  .accent-graphic > .note-hotspot {
-    z-index: 999 !important;
-    position: absolute !important;
-    outline: none !important;
-  }
-
-  /* Mobile compositor fixes: avoid blend/mask/glow artifacts on iOS Safari */
-  /* Hide the large desktop glow that can render oddly on mobile compositors */
-  .accent-graphic.playing::before {
-    display: none !important;
-  }
-
-  /* Tone down playing-state background/glow on mobile */
-  .accent-graphic.playing {
-    background: transparent !important;
-    box-shadow: none !important;
-  }
-
-  /* Reduce vertical padding and avoid forcing 100vh on mobile browsers
-     which can include UI chrome; use dynamic viewport height and allow
-     sections to size naturally to avoid overflow on devices like iPhone */
-  .section {
-    height: auto !important;
-    /* allow most sections to be at least the viewport, but make the
-       blog section more compact below so its content and the "view
-       all posts" button are visible without extra scroll snaps */
-    min-height: 100dvh;
-    padding: 72px 16px 20px;
-  }
-
-  /* Compact the blog section so the three post cards + button fit on one
-     mobile screen without forcing the user to scroll inside the snap */
-  .section-blog {
-    min-height: auto !important;
-    /* Restore slightly larger top padding so the section title isn't
-       hidden beneath the fixed nav when snapping to the blog section. */
-    padding: 36px 12px 18px !important;
-  }
-
-  .blog-grid {
-    gap: 10px;
-  }
-
-  .blog-card {
-    padding: 10px;
-    border-radius: 10px;
-  }
-
-  .blog-title {
-    font-size: 0.95rem;
-  }
-
-  .blog-excerpt {
-    font-size: 0.9rem;
-    line-height: 1.2;
-    max-height: 3.6em; /* clamp excerpt to ~3 lines */
-    overflow: hidden;
-  }
-
-  /* Make the portfolio section match the compact blog layout on mobile */
-  .section-portfolio {
-    min-height: auto !important;
-    padding: 36px 12px 18px !important;
-  }
-
-  .portfolio-grid {
-    gap: 10px;
-  }
-
-  .portfolio-item {
-    padding: 10px;
-    border-radius: 10px;
-  }
-
-  .portfolio-title {
-    font-size: 0.95rem;
-  }
-
-  /* Slightly reduce hero top padding on small screens to keep content visible */
-  .section-hero {
-    padding-top: 72px;
-  }
-
-  /* Desktop tweaks were moved outside the mobile block to apply on large screens. */
-
-  /* Mobile-only snap behavior: make `.page` scroll the stacked sections
-     and force each `.section` to occupy the full dynamic viewport so a
-     single section is visible per snap on mobile devices. This keeps
-     desktop snap behavior unchanged. */
-  .page {
-    height: 100dvh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .section {
-    height: 100dvh !important;
-    min-height: 100dvh !important;
-    scroll-snap-align: start;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 36px 12px 18px;
-  }
-
-  /* Make inner content scrollable if it's taller than the viewport */
-  .section > .section-inner,
-  .section > .page-inner {
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    max-height: calc(100dvh - 84px);
-  }
-
-}
-
-/* Layout for individual blog post pages rendered with _layouts/default.html */
-.post-content {
-  padding: 84px 24px 48px;
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-/* When a section is rendered inside the standalone `post-content` (for
-   pages like `/blog/`), ensure the section title clears the fixed nav by
-   adding extra top padding. This prevents the heading from being hidden
-   behind the nav when the window is resized. */
-.post-content > .section {
-  padding-top: 120px;
-  /* Allow standalone pages (like /blog/) to flow naturally instead of
-     forcing each section to be full-viewport and vertically centered.
-     This ensures the top of the content is reachable and not hidden by
-     the fixed nav. */
-  height: auto !important;
-  align-items: flex-start;
-  justify-content: flex-start;
-}
-
-/* Images inserted into posts that should float with wrapped text. Use
-   the `post-img-right` class on an `<img>` tag in the Markdown file to
-   float right on wide screens and stack on small screens. */
-.post-content img.post-img-right {
-  float: right;
-  width: 320px;
-  max-width: 40%;
-  margin: 0 0 16px 24px;
-  border-radius: 8px;
+@keyframes cursor-blink { 0%,49% { opacity: 1; } 50%,100% { opacity: 0; } }
+@keyframes trigger-float { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-5px) rotate(2deg); } }
+@keyframes trigger-playing { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-3px) scale(1.04); } }
+@keyframes whisper-color {
+  0%,100% { color: rgba(60,244,255,.84); text-shadow: 0 0 4px rgba(60,244,255,.20); }
+  33% { color: rgba(140,92,255,.84); text-shadow: 0 0 5px rgba(140,92,255,.20); }
+  66% { color: rgba(255,79,216,.82); text-shadow: 0 0 5px rgba(255,79,216,.20); }
 }
 
 @media (max-width: 900px) {
-  .post-content img.post-img-right {
-    float: none;
-    display: block;
-    margin: 16px auto;
-    width: 80%;
-    max-width: 320px;
-  }
+  .nav { padding: 0 16px; }
+  .nav-links { gap: 14px; }
+  .hero-content { grid-template-columns: 1fr; gap: 2px; text-align: center; }
+  .hero-text { text-align: center; }
+  .hero-title { justify-content: center; font-size: clamp(1.8rem,7vw,2.6rem); }
+  .hero-tagline { margin: 0 auto; }
+  .hero-atmosphere { min-height: 260px; }
+  .note-hotspot { right: 25%; bottom: 22%; }
+  .hero-whisper { left: 24%; top: 43%; }
+  .blog-grid, .portfolio-grid { grid-template-columns: 1fr; gap: 10px; }
+  .soundcloud-iframe { height: 220px; }
+  .post-content img.post-img-right { float: none; display: block; width: 80%; max-width: 320px; margin: 16px auto; }
 }
 
-/* test comment */
+@media (max-width: 768px) {
+  .page { height: 100dvh; }
+  .section { height: 100dvh; min-height: 100dvh; padding: 76px 12px 18px; overflow-y: auto; }
+  .section-inner { max-height: calc(100dvh - 92px); overflow-y: auto; }
+  .hero-content { min-height: calc(100dvh - 94px); align-content: center; }
+  .hero-atmosphere { min-height: 225px; }
+  .hero-whisper { left: 16%; top: 37%; font-size: .78rem; }
+  .note-hotspot { right: 20%; bottom: 20%; }
+  .blog-card, .portfolio-item { padding: 10px; border-radius: 10px; }
+  .blog-excerpt { max-height: 3.6em; overflow: hidden; font-size: .9rem; line-height: 1.2; }
+  .section-description { margin-bottom: 18px; }
+  .post-content { padding: 84px 16px 36px; }
+}
 
-/* Desktop tweaks: widen the portfolio container so 3-column cards are
-   larger on full-width screens and track titles are more readable. */
-@media (min-width: 1200px) {
-  .section-portfolio .section-inner {
-    max-width: 1200px;
-  }
-
-  .portfolio-grid {
-    gap: 32px;
-  }
-
-  .portfolio-item {
-    padding: 24px;
-    border-radius: 16px;
-  }
-
-  .portfolio-title {
-    font-size: 1.1rem;
-  }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }

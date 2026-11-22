@@ -7,12 +7,12 @@ layout: null
   <meta charset="UTF-8" />
   <title>Nate Audio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="{{ '/css/style.css' | relative_url }}" />
 </head>
 <body>
   <header class="nav">
     <div class="nav-logo">Nate Audio</div>
-    <nav class="nav-links">
+    <nav class="nav-links" aria-label="Primary navigation">
       <a href="#hero" class="nav-link">Home</a>
       <a href="#portfolio" class="nav-link">Portfolio</a>
       <a href="#blog" class="nav-link">Blog</a>
@@ -21,112 +21,37 @@ layout: null
   </header>
 
   <main class="page">
-    <!-- HERO -->
     <section id="hero" class="section section-hero">
+      <canvas id="visualizer" aria-hidden="true"></canvas>
       <div class="hero-content">
         <div class="hero-text">
-          <h1 class="hero-title">
-            <span class="hero-name">Nate Audio</span>
-            <span class="hero-cursor">█</span>
-          </h1>
-          <p class="hero-subtitle">
-            Composer • Sound Designer • Musician
-          </p>
-          <p class="hero-tagline">
-            Music and sound for games, podcasts, streams, and indie stories.
-          </p>
+          <h1 class="hero-title"><span class="hero-name">Nate Audio</span><span class="hero-cursor" aria-hidden="true">█</span></h1>
+          <p class="hero-subtitle">Composer • Sound Designer • Musician</p>
+          <p class="hero-tagline">Music and sound for games, podcasts, streams, and indie stories.</p>
         </div>
-
-        <div class="hero-graphic">
-          <div class="accent-graphic">
-            <canvas id="visualizer"></canvas>
-            <button class="note-hotspot" aria-label="Play a short chiptune">
-              <span class="note-pair">♫♪</span>
-            </button>
-          </div>
+        <div class="hero-atmosphere">
+          <p class="hero-whisper">...listen closely</p>
+          <button class="note-hotspot" type="button" aria-label="Play a short chiptune" aria-pressed="false"><span aria-hidden="true">♫♪</span></button>
         </div>
       </div>
     </section>
 
-    <!-- PORTFOLIO -->
     <section id="portfolio" class="section section-portfolio">
       <div class="section-inner">
         <h2 class="section-title">Portfolio</h2>
-        <p class="section-description">
-          Selected works for games, podcasts, and digital media.
-        </p>
-
+        <p class="section-description">Selected works for games, podcasts, and digital media.</p>
         <div class="portfolio-grid">
-          <div class="portfolio-item">
-            <h3 class="portfolio-title">Game Soundtrack</h3>
-            <p class="portfolio-meta">Game soundtrack • 2024</p>
-            <div class="portfolio-embed">
-              <iframe class="soundcloud-iframe" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%3Atracks%3A1219967482%3Fsecret_token%3Ds-Ri6X3t8PNnn&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
-              <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/natedeegreat" title="NateDeGreat" target="_blank" style="color: #cccccc; text-decoration: none;">NateDeGreat</a> · <a href="https://soundcloud.com/natedeegreat/chiptune-theme/s-Ri6X3t8PNnn" title="Chiptune Theme" target="_blank" style="color: #cccccc; text-decoration: none;">Chiptune Theme</a></div>
-            </div>
-          </div>
-
-          <div class="portfolio-item">
-            <h3 class="portfolio-title">Podcast Theme</h3>
-            <p class="portfolio-meta">Podcast theme • 2024</p>
-            <div class="portfolio-embed">
-              <iframe class="soundcloud-iframe" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%3Atracks%3A1219967464%3Fsecret_token%3Ds-iezwFIj2962&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
-              <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/natedeegreat" title="NateDeGreat" target="_blank" style="color: #cccccc; text-decoration: none;">NateDeGreat</a> · <a href="https://soundcloud.com/natedeegreat/minimal-chimes/s-iezwFIj2962" title="Minimal Chimes" target="_blank" style="color: #cccccc; text-decoration: none;">Minimal Chimes</a></div>
-            </div>
-          </div>
-
-          <div class="portfolio-item">
-            <h3 class="portfolio-title">Indie Film Music</h3>
-            <p class="portfolio-meta">Indie film cue • 2023</p>
-            <div class="portfolio-embed">
-              <iframe class="soundcloud-iframe" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%3Atracks%3A1194796765%3Fsecret_token%3Ds-u8ga9BneO63&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
-              <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/natedeegreat" title="NateDeGreat" target="_blank" style="color: #cccccc; text-decoration: none;">NateDeGreat</a> · <a href="https://soundcloud.com/natedeegreat/at-the-edge/s-u8ga9BneO63" title="At The Edge" target="_blank" style="color: #cccccc; text-decoration: none;">At The Edge</a></div>
-            </div>
-          </div>
+          <div class="portfolio-item"><h3 class="portfolio-title">Game Soundtrack</h3><p class="portfolio-meta">Game soundtrack • 2024</p><div class="portfolio-embed"><iframe class="soundcloud-iframe" title="Chiptune Theme by NateDeGreat" scrolling="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%3Atracks%3A1219967482%3Fsecret_token%3Ds-Ri6X3t8PNnn&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div class="soundcloud-credit"><a href="https://soundcloud.com/natedeegreat" target="_blank" rel="noopener">NateDeGreat</a> · <a href="https://soundcloud.com/natedeegreat/chiptune-theme/s-Ri6X3t8PNnn" target="_blank" rel="noopener">Chiptune Theme</a></div></div></div>
+          <div class="portfolio-item"><h3 class="portfolio-title">Podcast Theme</h3><p class="portfolio-meta">Podcast theme • 2024</p><div class="portfolio-embed"><iframe class="soundcloud-iframe" title="Minimal Chimes by NateDeGreat" scrolling="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%3Atracks%3A1219967464%3Fsecret_token%3Ds-iezwFIj2962&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div class="soundcloud-credit"><a href="https://soundcloud.com/natedeegreat" target="_blank" rel="noopener">NateDeGreat</a> · <a href="https://soundcloud.com/natedeegreat/minimal-chimes/s-iezwFIj2962" target="_blank" rel="noopener">Minimal Chimes</a></div></div></div>
+          <div class="portfolio-item"><h3 class="portfolio-title">Indie Film Music</h3><p class="portfolio-meta">Indie film cue • 2023</p><div class="portfolio-embed"><iframe class="soundcloud-iframe" title="At The Edge by NateDeGreat" scrolling="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%3Atracks%3A1194796765%3Fsecret_token%3Ds-u8ga9BneO63&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div class="soundcloud-credit"><a href="https://soundcloud.com/natedeegreat" target="_blank" rel="noopener">NateDeGreat</a> · <a href="https://soundcloud.com/natedeegreat/at-the-edge/s-u8ga9BneO63" target="_blank" rel="noopener">At The Edge</a></div></div></div>
         </div>
       </div>
     </section>
 
-    <!-- BLOG PREVIEW -->
-    <section id="blog" class="section section-blog">
-      <div class="section-inner">
-        <h2 class="section-title">Blog</h2>
-        <p class="section-description">
-          Thoughts on sound, storytelling, and making things for screens.
-        </p>
-
-        <div class="blog-grid">
-          {% for post in site.posts limit:3 %}
-          <article class="blog-card">
-            <h3 class="blog-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-            <p class="blog-meta">{{ post.date | date: "%b %Y" }}</p>
-            <p class="blog-excerpt">{{ post.excerpt | strip_html | truncate: 160 }}</p>
-            <a href="{{ post.url | relative_url }}" class="blog-link">Read more</a>
-          </article>
-          {% endfor %}
-        </div>
-
-        <div class="blog-all">
-          <a href="{{ '/blog/' | relative_url }}" class="button-outline">View all posts</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section id="contact" class="section section-contact">
-      <div class="section-inner">
-        <h2 class="section-title">Contact</h2>
-        <p class="section-description">
-          If you’re building a game, podcast, stream, or indie story and need music or sound, I’d love to talk.
-        </p>
-        <p class="contact-email">
-          <span>Email:</span> <a href="mailto:nateaudio@proton.me">nateaudio@proton.me</a>
-        </p>
-      </div>
-    </section>
+    <section id="blog" class="section section-blog"><div class="section-inner"><h2 class="section-title">Blog</h2><p class="section-description">Thoughts on sound, storytelling, and making things for screens.</p><div class="blog-grid">{% for post in site.posts limit:3 %}<article class="blog-card"><h3 class="blog-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3><p class="blog-meta">{{ post.date | date: "%b %Y" }}</p><p class="blog-excerpt">{{ post.excerpt | strip_html | truncate: 160 }}</p><a href="{{ post.url | relative_url }}" class="blog-link">Read more</a></article>{% endfor %}</div><div class="blog-all"><a href="{{ '/blog/' | relative_url }}" class="button-outline">View all posts</a></div></div></section>
+    <section id="contact" class="section section-contact"><div class="section-inner"><h2 class="section-title">Contact</h2><p class="section-description">If you’re building a game, podcast, stream, or indie story and need music or sound, I’d love to talk.</p><p class="contact-email"><span>Email:</span> <a href="mailto:nateaudio@proton.me">nateaudio@proton.me</a></p></div></section>
   </main>
-
-  <audio id="chiptune-audio" src="assets/chiptune-loop.mp3"></audio>
-  <script src="js/main.js"></script>
+  <audio id="chiptune-audio" src="{{ '/assets/chiptune-loop.mp3' | relative_url }}" preload="metadata"></audio>
+  <script src="{{ '/js/main.js' | relative_url }}"></script>
 </body>
 </html>

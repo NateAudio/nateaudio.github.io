@@ -37,6 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let previousSpectrum = null;
 
   let playing = false;
+  // Master opacity for the music-reactive layers. It rises when playback
+  // begins and decays gently after pause/end instead of snapping off.
+  let visualMix = 0;
   let lastFrame = performance.now();
   let reveal = 0;
   let pulse = 0;
@@ -272,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function drawStaff(width, height, music, time) {
-    if (!playing || reveal < .005) return;
+    if (visualMix < .005 || reveal < .005) return;
 
     const points = pathGeometry(width, height, time, music);
     const lineBaseSpacing = width < 768 ? 5 : 7;
@@ -327,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function drawStaffNotes(width, height, music, time, delta) {
-    if (!playing || reveal < .18) return;
+    if (visualMix < .005 || reveal < .18) return;
 
     const points = pathGeometry(width, height, time, music);
     const spacing = width < 768 ? 5 : 7;
@@ -397,7 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function drawEdgeGlow(width, height, music, time) {
-    if (!playing) return;
+    if (visualMix < .005) return;
 
     const kick = Math.min(1, music.bass * .75 + pulse * .9);
     const shimmer = Math.min(1, music.high * .55 + pulse * .45);
@@ -444,6 +447,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const time = now/1000;
     lastFrame = now;
 
+    // Quick entrance, followed by a relaxed fade after pause or ending.
+    visualMix = playing
+      ? Math.min(1, visualMix + delta * 1.8)
+      : Math.max(0, visualMix - delta * 0.56);
+
     const music = readMusic();
 
     if (playing) {
@@ -451,19 +459,39 @@ document.addEventListener("DOMContentLoaded", () => {
       reveal = Math.min(1, reveal + delta*.72);
     } else {
       pulse *= Math.pow(.035,delta);
-      reveal = Math.max(0, reveal - delta*.80);
+      reveal = Math.max(0, reveal - delta*.45);
     }
 
     ctx.clearRect(0,0,width,height);
-    drawEdgeGlow(width,height,music,time);
+
+    // The idle constellation remains after playback.
     drawGlitter(music,time);
     drawIdleNotes(width,height,music,time,delta);
-    drawStaff(width,height,music,time);
-    drawStaffNotes(width,height,music,time,delta);
-    spawnAccent(music,time);
-    drawAccents(delta);
 
-    if (playing) updatePageResponse(music);
+    // Staff, traveling notes, accents, and edge light fade together.
+    if (visualMix > .001) {
+      ctx.save();
+      ctx.globalAlpha = visualMix;
+      drawEdgeGlow(width,height,music,time);
+      drawStaff(width,height,music,time);
+      drawStaffNotes(width,height,music,time,delta);
+      drawAccents(delta);
+      ctx.restore();
+
+      updatePageResponse({
+        bass: music.bass * visualMix,
+        mid: music.mid * visualMix,
+        high: music.high * visualMix,
+        avg: music.avg * visualMix,
+        onset: music.onset * visualMix
+      });
+    } else if (!playing) {
+      ["--wash-cyan","--wash-magenta","--hero-shadow","--hero-y","--nav-shadow","--nav-y"]
+        .forEach((name) => rootStyle.removeProperty(name));
+    }
+
+    // New accents are spawned only while audio is actively playing.
+    spawnAccent(music,time);
     requestAnimationFrame(render);
   }
 
@@ -478,7 +506,6 @@ document.addEventListener("DOMContentLoaded", () => {
     trigger.setAttribute("aria-label",next ? "Stop the chiptune" : "Play a short chiptune");
 
     if (!next) {
-      ["--wash-cyan","--wash-magenta","--hero-shadow","--hero-y","--nav-shadow","--nav-y"].forEach(name => rootStyle.removeProperty(name));
       previousEnergy = 0;
     }
   }

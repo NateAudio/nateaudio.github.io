@@ -39,22 +39,21 @@ body {
 }
 
 /*
-   One perspective grid, not a tiled texture.
-   The SVG is embedded directly so there is no extra asset to manage.
-   Lines converge on one vanishing point and fade away toward the horizon.
+   Static responsive perspective grid canvas.
+   JavaScript redraws it only when the viewport changes size.
 */
 .grid-overlay,
 body::before {
-  content: "";
+  display: none;
+}
+
+#perspective-grid {
   position: fixed;
   inset: 0;
   z-index: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2000 900' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='c' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%233cf4ff' stop-opacity='.38'/%3E%3Cstop offset='.5' stop-color='%238c5cff' stop-opacity='.32'/%3E%3Cstop offset='1' stop-color='%23ff4fd8' stop-opacity='.38'/%3E%3C/linearGradient%3E%3ClinearGradient id='f' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='white' stop-opacity='0'/%3E%3Cstop offset='.34' stop-color='white' stop-opacity='.035'/%3E%3Cstop offset='.56' stop-color='white' stop-opacity='.24'/%3E%3Cstop offset='1' stop-color='white' stop-opacity='.68'/%3E%3C/linearGradient%3E%3Cmask id='m'%3E%3Crect width='2000' height='900' fill='url(%23f)'/%3E%3C/mask%3E%3C/defs%3E%3Cg fill='none' stroke='url(%23c)' stroke-width='1.1' mask='url(%23m)' vector-effect='non-scaling-stroke'%3E%3Cpath d='M1000 300L-1000 900M1000 300L-750 900M1000 300L-500 900M1000 300L-250 900M1000 300L0 900M1000 300L250 900M1000 300L500 900M1000 300L720 900M1000 300L900 900M1000 300L1100 900M1000 300L1280 900M1000 300L1500 900M1000 300L1750 900M1000 300L2000 900M1000 300L2250 900M1000 300L2500 900M1000 300L2750 900M1000 300L3000 900'/%3E%3Cpath d='M0 332H2000M0 366H2000M0 403H2000M0 445H2000M0 493H2000M0 548H2000M0 613H2000M0 689H2000M0 779H2000M0 895H2000'/%3E%3C/g%3E%3C/svg%3E");
-  background-position: center bottom;
-  background-repeat: repeat-x;
-  background-size: 2000px 100%;
-  opacity: 0.48;
 }
 
 .page,
